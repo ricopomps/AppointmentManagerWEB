@@ -1,3 +1,4 @@
+import { ConflictError, UnathorizedError } from "../errors/http_errors";
 import { Note } from "../models/note";
 import { User } from "../models/user";
 
@@ -8,7 +9,16 @@ async function fetchData(input: RequestInfo, init?: RequestInit) {
   } else {
     const errorBody = await response.json();
     const errorMessage = errorBody.error;
-    throw Error(errorMessage);
+    switch (response.status) {
+      case 401:
+        throw new UnathorizedError(errorMessage);
+      case 409:
+        throw new ConflictError(errorMessage);
+      default:
+        throw Error(
+          `Falhou com status: ${response.status} mensagem: ${errorMessage}`
+        );
+    }
   }
 }
 

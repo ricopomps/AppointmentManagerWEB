@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import NavBar from "./components/NavBar/NavBar";
 import SignUpModal from "./components/SignUpModal";
-import LoginModal from "./components/loginModal";
+import LoginModal from "./components/LoginModal";
 import { User } from "./models/user";
 import * as NotesApi from "./network/notes_api";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
