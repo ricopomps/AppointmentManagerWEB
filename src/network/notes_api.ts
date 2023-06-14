@@ -3,7 +3,8 @@ import { Note } from "../models/note";
 import { User } from "../models/user";
 
 async function fetchData(input: RequestInfo, init?: RequestInit) {
-  const response = await fetch(input, init);
+  const { REACT_APP_API_BASE_URL: baseUrl } = process.env;
+  const response = await fetch(`${baseUrl}${input.toString()}`, init);
   if (response.ok) {
     return response;
   } else {
