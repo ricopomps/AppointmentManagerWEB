@@ -2,7 +2,11 @@
   "name": "appointmentmanagerweb",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "engines": {
+    "node": "v18.16.0",
+    "npm": "9.5.1"
+  },
+  "proxy": "https://appointment-manager-api.herokuapp.com",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
