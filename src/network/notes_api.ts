@@ -1,35 +1,18 @@
-import { ConflictError, UnathorizedError } from "../errors/http_errors";
 import { Note } from "../models/note";
 import { User } from "../models/user";
+import axios from "axios";
+const { REACT_APP_API_BASE_URL: baseUrl } = process.env;
 
-async function fetchData(input: RequestInfo, init?: RequestInit) {
-  const { REACT_APP_API_BASE_URL: baseUrl } = process.env;
-  const response = await fetch(`${baseUrl}${input.toString()}`, init);
-  if (response.ok) {
-    return response;
-  } else {
-    const errorBody = await response.json();
-    const errorMessage = errorBody.error;
-    switch (response.status) {
-      case 401:
-        throw new UnathorizedError(errorMessage);
-      case 409:
-        throw new ConflictError(errorMessage);
-      default:
-        throw Error(
-          `Falhou com status: ${response.status} mensagem: ${errorMessage}`
-        );
-    }
-  }
-}
+const API = axios.create({
+  baseURL: baseUrl,
+  withCredentials: true,
+});
 
 //USER ROUTES
 
 export async function getLoggedInUser(): Promise<User> {
-  const response = await fetchData("/api/users", {
-    method: "GET",
-  });
-  return response.json();
+  const response = await API.get("/api/users");
+  return response.data;
 }
 
 export interface SignUpCredentials {
@@ -39,14 +22,8 @@ export interface SignUpCredentials {
 }
 
 export async function signUp(credentials: SignUpCredentials): Promise<User> {
-  const response = await fetchData("/api/users/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-  return response.json();
+  const response = await API.post("/api/users/signup", credentials);
+  return response.data;
 }
 
 export interface LoginCredentials {
@@ -55,26 +32,18 @@ export interface LoginCredentials {
 }
 
 export async function login(credentials: LoginCredentials): Promise<User> {
-  const response = await fetchData("/api/users/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(credentials),
-  });
-  return response.json();
+  const response = await API.post("/api/users/login", credentials);
+  return response.data;
 }
 
 export async function logout() {
-  await fetchData("/api/users/logout", { method: "POST" });
+  await API.post("/api/users/logout");
 }
 
 //NOTES ROUTES
 export async function fetchNotes(): Promise<Note[]> {
-  const response = await fetchData("/api/notes", {
-    method: "GET",
-  });
-  return response.json();
+  const response = await API.get("/api/notes", { withCredentials: true });
+  return response.data;
 }
 
 export interface NoteInput {
@@ -83,30 +52,18 @@ export interface NoteInput {
 }
 
 export async function createNote(note: NoteInput): Promise<Note> {
-  const response = await fetchData("/api/notes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(note),
-  });
-  return response.json();
+  const response = await API.post("/api/notes", note);
+  return response.data;
 }
 
 export async function updateNote(
   noteId: string,
   note: NoteInput
 ): Promise<Note> {
-  const response = await fetchData("/api/notes/" + noteId, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(note),
-  });
-  return response.json();
+  const response = await API.patch(`/api/notes/${noteId}`, note);
+  return response.data;
 }
 
 export async function deleteNote(noteId: string) {
-  await fetchData("/api/notes/" + noteId, { method: "DELETE" });
+  await API.delete(`/api/notes/${noteId}`);
 }
