@@ -25,6 +25,9 @@ const NavBar = ({
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
           <Nav>
+            <Nav.Link as={Link} to="/notes">
+              Notas
+            </Nav.Link>
             <Nav.Link as={Link} to="/privacy">
               Privacidade
             </Nav.Link>

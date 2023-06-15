@@ -10,6 +10,8 @@ import NotesPage from "./pages/NotesPages";
 import PrivacyPage from "./pages/PrivacyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import styles from "./styles/App.module.css";
+import HomePage from "./pages/HomePage";
+
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
 
@@ -38,8 +40,9 @@ function App() {
         />
         <Container className={styles.pageContainer}>
           <Routes>
+            <Route path="/" element={<HomePage />} />
             <Route
-              path="/"
+              path="/notes"
               element={<NotesPage loggedInUser={loggedInUser} />}
             />
             <Route path="/privacy" element={<PrivacyPage />} />
