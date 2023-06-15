@@ -1,13 +1,15 @@
 import { format, addMinutes, startOfDay, isBefore } from "date-fns";
 
-interface Interval {
+export interface Interval {
   interval: string;
   startTime: string;
   endTime: string;
+  breakStartTime?: string;
+  breakEndTime?: string;
 }
 
 export function generateIntervals(value: Interval): string[] {
-  const { interval, startTime, endTime } = value;
+  const { interval, startTime, endTime, breakStartTime, breakEndTime } = value;
 
   const inputFormat = "HH:mm:ss";
   const outputFormat = "HH:mm";
@@ -15,9 +17,25 @@ export function generateIntervals(value: Interval): string[] {
 
   const startTimeDate = parseTime(startTime, inputFormat);
   const endTimeDate = parseTime(endTime, inputFormat);
+  let breakStartDateTime: Date | undefined;
+  let breakEndDateTime: Date | undefined;
 
+  if (breakStartTime && breakEndTime) {
+    breakStartDateTime = parseTime(breakStartTime, inputFormat);
+    breakEndDateTime = parseTime(breakEndTime, inputFormat);
+  }
   let currentTime = startTimeDate;
+
   while (isBefore(currentTime, endTimeDate)) {
+    const isOnABreak =
+      breakStartDateTime &&
+      breakEndDateTime &&
+      currentTime >= breakStartDateTime &&
+      currentTime < breakEndDateTime;
+
+    if (isOnABreak) {
+      currentTime = breakEndDateTime!;
+    }
     const endTimeOfInterval = addMinutes(
       currentTime,
       getIntervalMinutes(interval)

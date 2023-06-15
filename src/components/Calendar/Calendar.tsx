@@ -1,6 +1,6 @@
 import Table from "react-bootstrap/Table";
 import { add, format, startOfWeek } from "date-fns";
-import { generateIntervals } from "../../utils/prepareIntervals";
+import { generateIntervals, Interval } from "../../utils/prepareIntervals";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import {
   Subtitle,
@@ -12,10 +12,12 @@ import {
 } from "../../utils/calendarUtils";
 
 const Calendar = () => {
-  const intervalValues = {
+  const intervalValues: Interval = {
     interval: "00:30:00",
     startTime: "08:00:00",
     endTime: "18:00:00",
+    breakStartTime: "12:00:00",
+    breakEndTime: "14:00:00",
   };
 
   const week: Week[] = [
