@@ -16,6 +16,7 @@ export interface Week {
 export enum Subtitle {
   Vacant = "success",
   Occupied = "danger",
+  Selected = "warning",
 }
 
 export const getTooltip = (check: string) => {
@@ -24,6 +25,8 @@ export const getTooltip = (check: string) => {
       return "Livre";
     case Subtitle.Occupied:
       return "Sem vagas";
+    case Subtitle.Selected:
+      return "Selecionado";
     default:
       return "Agendamento";
   }

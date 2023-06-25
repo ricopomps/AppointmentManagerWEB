@@ -10,6 +10,7 @@ import {
   Week,
   getWeekDayNames,
 } from "../../utils/calendarUtils";
+import { useState } from "react";
 
 const Calendar = () => {
   const intervalValues: Interval = {
@@ -36,6 +37,12 @@ const Calendar = () => {
       add(startOfWeek(new Date()), { weeks: numWeek, days: index }),
       dayFormat
     );
+  interface SelectedDay {
+    index: number;
+    interval: string;
+    day: string;
+  }
+  const [selectedDay, setSelectedDay] = useState<SelectedDay | null>(null);
 
   return (
     <>
@@ -79,8 +86,13 @@ const Calendar = () => {
                       Vacant={checking}
                       tooltip={getTooltip(checking)}
                       disabled={checking === Subtitle.Occupied}
+                      selected={
+                        selectedDay?.index === index &&
+                        selectedDay?.interval === interval
+                      }
                       onClick={() => {
-                        console.log("clicado!");
+                        setSelectedDay({ index, interval, day: week.day });
+
                         // dispatch({
                         //   type: SET_FORM,
                         //   payload: {
