@@ -6,8 +6,6 @@ export interface AppointmentForm {
   email: string;
   phone: string;
   cpf: string;
-  date: Date;
-  time: string;
 }
 
 interface AppointmentCreationForm {
@@ -16,6 +14,9 @@ interface AppointmentCreationForm {
 
 export async function appoint(appointment: AppointmentCreationForm) {
   console.log(appointment);
-  const response = await API.post("/api/appointments", appointment);
+  const response = await API.post(
+    "/api/appointments",
+    appointment.appointmentForm
+  );
   return response.data;
 }
