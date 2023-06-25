@@ -23,3 +23,7 @@
 .width50 {
   width: 50%;
 }
+
+.errorMessage {
+  color: var(--bs-form-invalid-border-color);
+}

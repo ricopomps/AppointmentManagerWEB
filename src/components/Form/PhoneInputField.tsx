@@ -10,6 +10,7 @@ import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { AppointmentForm } from "../../network/notes_api";
 import { Form } from "react-bootstrap";
+import stylesUtils from "../../styles/utils.module.css";
 
 interface PhoneInputProps {
   error?: FieldError;
@@ -35,6 +36,7 @@ const PhoneInputField = ({ error, control }: PhoneInputProps) => {
           }}
           render={({ field: { onChange, value } }) => (
             <PhoneInput
+              className={error?.message && "input-phone-number"}
               value={value}
               onChange={onChange}
               defaultCountry="BR"
@@ -42,10 +44,11 @@ const PhoneInputField = ({ error, control }: PhoneInputProps) => {
             />
           )}
         />
-        {error?.message && <p className="error-message">{error.message}</p>}
+        {error?.message && (
+          <div className={stylesUtils.errorMessage}>{error.message}</div>
+        )}
       </div>
     </Form>
   );
 };
-
 export default PhoneInputField;
