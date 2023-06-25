@@ -4,7 +4,7 @@ import { User } from "../models/user";
 import { SignUpCredentials } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
-import TextInputField from "./form/TextInputField";
+import TextInputField from "./Form/TextInputField";
 import stylesUtils from "../styles/utils.module.css";
 import { ConflictError } from "../errors/http_errors";
 

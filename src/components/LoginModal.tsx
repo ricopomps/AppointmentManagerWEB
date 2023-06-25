@@ -3,7 +3,7 @@ import { User } from "../models/user";
 import { LoginCredentials } from "../network/notes_api";
 import * as NotesApi from "../network/notes_api";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
-import TextInputField from "./form/TextInputField";
+import TextInputField from "./Form/TextInputField";
 import stylesUtils from "../styles/utils.module.css";
 import { useState } from "react";
 import { UnathorizedError } from "../errors/http_errors";

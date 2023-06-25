@@ -21,7 +21,7 @@ export enum Subtitle {
 export const getTooltip = (check: string) => {
   switch (check) {
     case Subtitle.Vacant:
-      return "Vacant";
+      return "Livre";
     case Subtitle.Occupied:
       return "Sem vagas";
     default:
