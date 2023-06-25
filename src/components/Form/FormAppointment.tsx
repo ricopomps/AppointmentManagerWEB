@@ -6,9 +6,12 @@ import { AppointmentForm } from "../../network/notes_api";
 import { UnathorizedError } from "../../errors/http_errors";
 import { useState } from "react";
 import PhoneInputField from "./PhoneInputField";
+import { useSelectedDay } from "../../context/SelectedDayContext";
+
 interface FormAppointmentProps {}
 
 const FormAppointment = ({}: FormAppointmentProps) => {
+  const { selectedDay } = useSelectedDay();
   const [errorText, setErrorText] = useState<string | null>(null);
   const {
     register,
@@ -18,9 +21,12 @@ const FormAppointment = ({}: FormAppointmentProps) => {
   } = useForm<AppointmentForm>();
   async function onSubmit(credentials: AppointmentForm) {
     try {
-      console.log(credentials);
+      setErrorText(null);
+      console.log(credentials, selectedDay);
+      if (!selectedDay) throw Error("Selecione uma data");
     } catch (error) {
       if (error instanceof UnathorizedError) setErrorText(error.message);
+      else if (error instanceof Error) setErrorText(error.message);
       else alert(error);
       console.error(error);
     }
