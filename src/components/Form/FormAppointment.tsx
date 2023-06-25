@@ -37,7 +37,7 @@ const FormAppointment = ({}: FormAppointmentProps) => {
             name="name"
             label="Nome"
             type="text"
-            placeholder="Usuário"
+            placeholder="Nome"
             register={register}
             registerOptions={{ required: "Campo Obrigatório" }}
             error={errors.name}
@@ -46,7 +46,7 @@ const FormAppointment = ({}: FormAppointmentProps) => {
             name="email"
             label="E-mail"
             type="text"
-            placeholder="Senha"
+            placeholder="E-mail"
             register={register}
             registerOptions={{ required: "Campo Obrigatório" }}
             error={errors.email}
@@ -55,7 +55,7 @@ const FormAppointment = ({}: FormAppointmentProps) => {
             name="cpf"
             label="Cpf"
             type="text"
-            placeholder="Usuário"
+            placeholder="Cpf"
             register={register}
             registerOptions={{ required: "Campo Obrigatório" }}
             error={errors.cpf}
