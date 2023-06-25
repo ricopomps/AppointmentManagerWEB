@@ -21,13 +21,13 @@ const Calendar = () => {
   };
 
   const week: Week[] = [
-    { day: "11/06/2023", schedules: [] },
-    { day: "12/06/2023", schedules: [] },
-    { day: "13/06/2023", schedules: [] },
-    { day: "14/06/2023", schedules: [] },
-    { day: "15/06/2023", schedules: [] },
-    { day: "16/06/2023", schedules: [] },
-    { day: "17/06/2023", schedules: [] },
+    { day: "25/06/2023", schedules: [] },
+    { day: "26/06/2023", schedules: [] },
+    { day: "27/06/2023", schedules: [] },
+    { day: "28/06/2023", schedules: [] },
+    { day: "29/06/2023", schedules: [] },
+    { day: "30/06/2023", schedules: [] },
+    { day: "31/06/2023", schedules: [] },
   ];
   const numWeek = 0;
 

@@ -67,3 +67,12 @@ export async function updateNote(
 export async function deleteNote(noteId: string) {
   await API.delete(`/api/notes/${noteId}`);
 }
+
+export interface AppointmentForm {
+  name: string;
+  email: string;
+  phone: string;
+  cpf: string;
+  date: Date;
+  time: string;
+}

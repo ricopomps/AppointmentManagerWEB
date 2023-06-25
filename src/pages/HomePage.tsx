@@ -1,15 +1,20 @@
-import { Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import Calendar from "../components/Calendar/Calendar";
-import stylesUtils from "../styles/utils.module.css";
+import FormAppointment from "../components/Form/FormAppointment";
 
 interface HomePageProps {}
 
 const HomePage = ({}: HomePageProps) => {
   return (
     <Container>
-      <div className={stylesUtils.width50}>
-        <Calendar />
-      </div>
+      <Row>
+        <Col sm={12} md={8}>
+          <Calendar />
+        </Col>
+        <Col sm={12} md={4}>
+          <FormAppointment />
+        </Col>
+      </Row>
     </Container>
   );
 };
