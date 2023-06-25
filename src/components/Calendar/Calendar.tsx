@@ -10,9 +10,11 @@ import {
   Week,
   getWeekDayNames,
 } from "../../utils/calendarUtils";
-import { useState } from "react";
+import { useSelectedDay } from "../../context/SelectedDayContext";
 
 const Calendar = () => {
+  const { selectedDay, setSelectedDay } = useSelectedDay();
+
   const intervalValues: Interval = {
     interval: "00:30:00",
     startTime: "08:00:00",
@@ -37,12 +39,6 @@ const Calendar = () => {
       add(startOfWeek(new Date()), { weeks: numWeek, days: index }),
       dayFormat
     );
-  interface SelectedDay {
-    index: number;
-    interval: string;
-    day: string;
-  }
-  const [selectedDay, setSelectedDay] = useState<SelectedDay | null>(null);
 
   return (
     <>
