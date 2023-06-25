@@ -45,6 +45,20 @@ export function getWeekDayNames(): string[] {
   return weekDayNames;
 }
 
+export function getWeekDays(): Date[] {
+  const startDate = startOfWeek(new Date());
+  const endDate = addDays(startDate, 6);
+
+  const weekDaysDates = eachDayOfInterval({ start: startDate, end: endDate });
+
+  const weekDayNames = weekDaysDates.map((date) => {
+    // console.log("date", date.getUTCDate(), date.getTime());
+    const day = format(date, dayFormat, { locale: ptBR });
+    return day.charAt(0).toUpperCase() + day.slice(1);
+  });
+  return weekDaysDates;
+}
+
 export const dateFormat = "dd/MM/yyyy";
 
 export const dayFormat = "dd/MM";

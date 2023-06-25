@@ -1,3 +1,4 @@
+import { parse } from "date-fns";
 import {
   ReactElement,
   createContext,
@@ -9,7 +10,7 @@ import {
 export interface SelectedDay {
   index: number;
   interval: string;
-  day: string;
+  day: Date | string;
 }
 
 export enum REDUCER_ACTION_TYPE {
@@ -44,14 +45,18 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
 const useSelectedDayContext = (initialState: StateType) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setSelectedDay = useCallback(
-    (selectedDay: SelectedDay) =>
-      dispatch({
-        type: REDUCER_ACTION_TYPE.SET_SELECTED_DAY,
-        payload: selectedDay,
-      }),
-    []
-  );
+  const setSelectedDay = useCallback((selectedDay: SelectedDay) => {
+    const selectedDate = parse(
+      selectedDay.day.toString(),
+      "dd/MM/yyyy",
+      new Date()
+    );
+
+    dispatch({
+      type: REDUCER_ACTION_TYPE.SET_SELECTED_DAY,
+      payload: { ...selectedDay, day: selectedDate },
+    });
+  }, []);
 
   return { state, setSelectedDay };
 };

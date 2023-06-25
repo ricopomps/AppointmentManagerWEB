@@ -30,7 +30,7 @@ const Calendar = () => {
     { day: "28/06/2023", schedules: [] },
     { day: "29/06/2023", schedules: [] },
     { day: "30/06/2023", schedules: [] },
-    { day: "31/06/2023", schedules: [] },
+    { day: "01/07/2023", schedules: [] },
   ];
   const numWeek = 0;
 
