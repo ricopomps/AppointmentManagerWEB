@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { User } from "../models/user";
-import { SignUpCredentials } from "../network/notes_api";
-import * as NotesApi from "../network/notes_api";
+import { SignUpCredentials } from "../network/usersApi";
+import * as UsersApi from "../network/usersApi";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 import TextInputField from "./Form/TextInputField";
 import stylesUtils from "../styles/utils.module.css";
@@ -22,7 +22,7 @@ const SignUpModal = ({ onDismiss, onSignUpSuccessful }: SignUpModalProps) => {
 
   async function onSubmit(credentials: SignUpCredentials) {
     try {
-      const newUser = await NotesApi.signUp(credentials);
+      const newUser = await UsersApi.signUp(credentials);
       onSignUpSuccessful(newUser);
     } catch (error) {
       if (error instanceof ConflictError) setErrorText(error.message);

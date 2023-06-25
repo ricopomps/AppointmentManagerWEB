@@ -2,7 +2,7 @@ import { Alert, Button, Card, Form } from "react-bootstrap";
 import TextInputField from "./TextInputField";
 import { useForm } from "react-hook-form";
 import stylesUtils from "../../styles/utils.module.css";
-import { AppointmentForm } from "../../network/notes_api";
+import { AppointmentForm } from "../../network/AppointmentApi";
 import { UnathorizedError } from "../../errors/http_errors";
 import { useState } from "react";
 import PhoneInputField from "./PhoneInputField";

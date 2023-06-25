@@ -8,7 +8,7 @@ import {
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 
 import "react-phone-number-input/style.css";
-import { AppointmentForm } from "../../network/notes_api";
+import { AppointmentForm } from "../../network/AppointmentApi";
 import { Form } from "react-bootstrap";
 import stylesUtils from "../../styles/utils.module.css";
 
