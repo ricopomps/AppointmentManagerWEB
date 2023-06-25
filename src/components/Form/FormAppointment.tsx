@@ -5,23 +5,20 @@ import stylesUtils from "../../styles/utils.module.css";
 import { AppointmentForm } from "../../network/notes_api";
 import { UnathorizedError } from "../../errors/http_errors";
 import { useState } from "react";
+import PhoneInputField from "./PhoneInputField";
 interface FormAppointmentProps {}
 
 const FormAppointment = ({}: FormAppointmentProps) => {
   const [errorText, setErrorText] = useState<string | null>(null);
-  const [date, setDate] = useState<Date | null>(null);
   const {
     register,
     handleSubmit,
-    getValues,
-    setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<AppointmentForm>();
   async function onSubmit(credentials: AppointmentForm) {
     try {
       console.log(credentials);
-      //   const user = await NotesApi.login(credentials);
-      //   onLoginSuccessful(user);
     } catch (error) {
       if (error instanceof UnathorizedError) setErrorText(error.message);
       else alert(error);
@@ -55,15 +52,6 @@ const FormAppointment = ({}: FormAppointmentProps) => {
             error={errors.email}
           />
           <TextInputField
-            name="phone"
-            label="Telefone"
-            type="text"
-            placeholder="Usuário"
-            register={register}
-            registerOptions={{ required: "Campo Obrigatório" }}
-            error={errors.phone}
-          />
-          <TextInputField
             name="cpf"
             label="Cpf"
             type="text"
@@ -72,44 +60,13 @@ const FormAppointment = ({}: FormAppointmentProps) => {
             registerOptions={{ required: "Campo Obrigatório" }}
             error={errors.cpf}
           />
-          {/* <TextDateFieldTest
-            name="date"
-            label="dateTest"
-            type="text"
-            placeholder="data"
-            getValue={date?.toString()}
-            setValue={setDate}
+          <PhoneInputField
+            control={control}
+            error={errors.phone}
             register={register}
             registerOptions={{ required: "Campo Obrigatório" }}
-            error={errors.time}
           />
-          <ReactDatePicker
-            maxDate={new Date()}
-            value={"field.value"}
-            onChange={(e) => console.log()}
-          /> */}
-          {/* <TextInputField
-            name="date"
-            label="Dia"
-            type="date"
-            placeholder="Usuário"
-            register={register}
-            registerOptions={{ required: "Campo Obrigatório" }}
-            error={errors.date}
-          /> */}
-          {/* <ReactDatePicker
-            selected={getValues("date")}
-            onChange={(date: Date) => setValue("date", date)}
-          /> */}
-          {/* <TextSelectField
-            name="time"
-            label="Horário"
-            type="select"
-            placeholder="data"
-            register={register}
-            registerOptions={{ required: "Campo Obrigatório" }}
-            error={errors.time}
-          /> */}
+          <br />
           <Button
             type="submit"
             disabled={isSubmitting}

@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./styles/global.css";
-import "react-datepicker/dist/react-datepicker.css";
+import "react-phone-number-input/style.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 const root = ReactDOM.createRoot(
