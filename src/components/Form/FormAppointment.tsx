@@ -7,6 +7,7 @@ import { UnathorizedError } from "../../errors/http_errors";
 import { useState } from "react";
 import PhoneInputField from "./PhoneInputField";
 import { useSelectedDay } from "../../context/SelectedDayContext";
+import * as AppointmentApi from "../../network/AppointmentApi";
 
 interface FormAppointmentProps {}
 
@@ -24,6 +25,9 @@ const FormAppointment = ({}: FormAppointmentProps) => {
       setErrorText(null);
       console.log(credentials, selectedDay);
       if (!selectedDay) throw Error("Selecione uma data");
+      await AppointmentApi.appoint({
+        appointmentForm: { ...credentials, ...selectedDay },
+      });
     } catch (error) {
       if (error instanceof UnathorizedError) setErrorText(error.message);
       else if (error instanceof Error) setErrorText(error.message);

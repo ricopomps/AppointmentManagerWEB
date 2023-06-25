@@ -15,6 +15,7 @@ interface AppointmentCreationForm {
 }
 
 export async function appoint(appointment: AppointmentCreationForm) {
+  console.log(appointment);
   const response = await API.post("/api/appointments", appointment);
   return response.data;
 }
