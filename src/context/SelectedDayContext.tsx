@@ -6,6 +6,7 @@ import {
   useContext,
   useReducer,
 } from "react";
+import { dateFormat } from "../utils/calendarUtils";
 
 export interface SelectedDay {
   index: number;
@@ -15,6 +16,7 @@ export interface SelectedDay {
 
 export enum REDUCER_ACTION_TYPE {
   SET_SELECTED_DAY,
+  CLEAR_SELECTED_DAY,
 }
 
 export type ReducerAction = {
@@ -36,6 +38,12 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
         selectedDay: action.payload,
       };
     }
+    case REDUCER_ACTION_TYPE.CLEAR_SELECTED_DAY: {
+      return {
+        ...state,
+        selectedDay: undefined,
+      };
+    }
     default: {
       return state;
     }
@@ -48,7 +56,7 @@ const useSelectedDayContext = (initialState: StateType) => {
   const setSelectedDay = useCallback((selectedDay: SelectedDay) => {
     const selectedDate = parse(
       selectedDay.day.toString(),
-      "dd/MM/yyyy",
+      dateFormat,
       new Date()
     );
 
@@ -58,7 +66,13 @@ const useSelectedDayContext = (initialState: StateType) => {
     });
   }, []);
 
-  return { state, setSelectedDay };
+  const clearSelectedDay = useCallback(() => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.CLEAR_SELECTED_DAY,
+    });
+  }, []);
+
+  return { state, setSelectedDay, clearSelectedDay };
 };
 
 type UseSelectedDayContextType = ReturnType<typeof useSelectedDayContext>;
@@ -66,6 +80,7 @@ type UseSelectedDayContextType = ReturnType<typeof useSelectedDayContext>;
 const initialContextState: UseSelectedDayContextType = {
   state: initialState,
   setSelectedDay: (selectedDay: SelectedDay) => {},
+  clearSelectedDay: () => {},
 };
 
 export const SelectedDayContext =
@@ -89,12 +104,14 @@ export const SelectedDayProvider = ({
 type UseSelectedDayHookType = {
   selectedDay?: SelectedDay;
   setSelectedDay: (selectedDay: SelectedDay) => void;
+  clearSelectedDay: () => void;
 };
 
 export const useSelectedDay = (): UseSelectedDayHookType => {
   const {
     state: { selectedDay },
     setSelectedDay,
+    clearSelectedDay,
   } = useContext(SelectedDayContext);
-  return { selectedDay, setSelectedDay };
+  return { selectedDay, setSelectedDay, clearSelectedDay };
 };

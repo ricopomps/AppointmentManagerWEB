@@ -9,10 +9,12 @@ import PhoneInputField from "./PhoneInputField";
 import { useSelectedDay } from "../../context/SelectedDayContext";
 import * as AppointmentApi from "../../network/AppointmentApi";
 
-interface FormAppointmentProps {}
+interface FormAppointmentProps {
+  refresh: () => void;
+}
 
-const FormAppointment = ({}: FormAppointmentProps) => {
-  const { selectedDay } = useSelectedDay();
+const FormAppointment = ({ refresh }: FormAppointmentProps) => {
+  const { selectedDay, clearSelectedDay } = useSelectedDay();
   const [errorText, setErrorText] = useState<string | null>(null);
   const {
     register,
@@ -23,11 +25,12 @@ const FormAppointment = ({}: FormAppointmentProps) => {
   async function onSubmit(credentials: AppointmentForm) {
     try {
       setErrorText(null);
-      console.log(credentials, selectedDay);
       if (!selectedDay) throw Error("Selecione uma data");
       await AppointmentApi.appoint({
         appointmentForm: { ...credentials, ...selectedDay },
       });
+      refresh();
+      clearSelectedDay();
     } catch (error) {
       if (error instanceof UnathorizedError) setErrorText(error.message);
       else if (error instanceof Error) setErrorText(error.message);

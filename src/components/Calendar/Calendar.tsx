@@ -1,5 +1,5 @@
 import Table from "react-bootstrap/Table";
-import { add, format, startOfWeek } from "date-fns";
+import { add, format, isSameDay, parse, startOfWeek, toDate } from "date-fns";
 import { generateIntervals, Interval } from "../../utils/prepareIntervals";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import {
@@ -9,11 +9,55 @@ import {
   dayFormat,
   Week,
   getWeekDayNames,
+  getWeekAndAppointments,
+  dateFormat,
 } from "../../utils/calendarUtils";
 import { useSelectedDay } from "../../context/SelectedDayContext";
+import * as AppointmentApi from "../../network/AppointmentApi";
+import { useEffect, useState } from "react";
 
-const Calendar = () => {
+interface CalendarProps {
+  refresh: boolean;
+}
+
+const Calendar = ({ refresh }: CalendarProps) => {
   const { selectedDay, setSelectedDay } = useSelectedDay();
+  const [week, setWeek] = useState<Week[]>([]);
+
+  useEffect(() => {
+    async function getAppointmentsBetweenDates() {
+      try {
+        const baseWeek = getWeekAndAppointments();
+        const appointmentsFromWeek =
+          await AppointmentApi.getAppointmentsBetweenDates({
+            startDate: parse(
+              baseWeek[0].day.toString(),
+              dateFormat,
+              new Date()
+            ),
+            endDate: parse(baseWeek[6].day.toString(), dateFormat, new Date()),
+          });
+
+        const formatedData = baseWeek.map((w) => {
+          return {
+            day: w.day,
+            schedules: appointmentsFromWeek
+              .filter((a) =>
+                isSameDay(
+                  toDate(Date.parse(a.day.toString())),
+                  parse(w.day, dateFormat, new Date())
+                )
+              )
+              .map((a) => a.interval),
+          };
+        });
+        setWeek(formatedData);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    getAppointmentsBetweenDates();
+  }, [refresh]);
 
   const intervalValues: Interval = {
     interval: "00:30:00",
@@ -23,15 +67,6 @@ const Calendar = () => {
     breakEndTime: "14:00:00",
   };
 
-  const week: Week[] = [
-    { day: "25/06/2023", schedules: [] },
-    { day: "26/06/2023", schedules: [] },
-    { day: "27/06/2023", schedules: [] },
-    { day: "28/06/2023", schedules: [] },
-    { day: "29/06/2023", schedules: [] },
-    { day: "30/06/2023", schedules: [] },
-    { day: "01/07/2023", schedules: [] },
-  ];
   const numWeek = 0;
 
   const dayOfWeek = (index: number) =>
@@ -88,14 +123,6 @@ const Calendar = () => {
                       }
                       onClick={() => {
                         setSelectedDay({ index, interval, day: week.day });
-
-                        // dispatch({
-                        //   type: SET_FORM,
-                        //   payload: {
-                        //     schedule: interval,
-                        //     date: (day.day, dateFormat).toDate(),
-                        //   },
-                        // });
                       }}
                     >
                       {interval}

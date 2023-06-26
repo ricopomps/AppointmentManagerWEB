@@ -16,8 +16,7 @@ interface GetAppointmentsBetweenDates {
 
 export async function getAppointmentsBetweenDates(
   dates: GetAppointmentsBetweenDates
-) {
-  console.log(dates);
+): Promise<(AppointmentForm & SelectedDay)[]> {
   const response = await API.get("/api/appointments", {
     params: {
       startDate: startOfDay(dates.startDate),
@@ -31,8 +30,9 @@ interface AppointmentCreationForm {
   appointmentForm: AppointmentForm & SelectedDay;
 }
 
-export async function appoint(appointment: AppointmentCreationForm) {
-  console.log(appointment);
+export async function appoint(
+  appointment: AppointmentCreationForm
+): Promise<AppointmentForm & SelectedDay> {
   const response = await API.post(
     "/api/appointments",
     appointment.appointmentForm

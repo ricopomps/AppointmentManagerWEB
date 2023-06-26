@@ -10,7 +10,7 @@ import { ptBR } from "date-fns/locale";
 
 export interface Week {
   day: string;
-  schedules: string[];
+  schedules?: string[];
 }
 
 export enum Subtitle {
@@ -51,11 +51,6 @@ export function getWeekDays(): Date[] {
 
   const weekDaysDates = eachDayOfInterval({ start: startDate, end: endDate });
 
-  const weekDayNames = weekDaysDates.map((date) => {
-    // console.log("date", date.getUTCDate(), date.getTime());
-    const day = format(date, dayFormat, { locale: ptBR });
-    return day.charAt(0).toUpperCase() + day.slice(1);
-  });
   return weekDaysDates;
 }
 
@@ -64,6 +59,13 @@ export const dateFormat = "dd/MM/yyyy";
 export const dayFormat = "dd/MM";
 
 export const hourFormat = "HH:mm";
+
+export function getWeekAndAppointments(): Week[] {
+  const days = getWeekDays();
+  return days.map((day) => {
+    return { day: format(day, dateFormat) };
+  });
+}
 
 export const check = (interval: string, week: Week) => {
   const intervalo = interval.split(" ")[0];
@@ -77,8 +79,9 @@ export const check = (interval: string, week: Week) => {
   );
 
   const timeAlredyPassed = isBefore(dateHour, hourNow);
-  if (timeAlredyPassed) {
+  if (timeAlredyPassed) return Subtitle.Occupied;
+
+  if (week.schedules && week.schedules.filter((s) => s === interval).length > 0)
     return Subtitle.Occupied;
-  }
   return Subtitle.Vacant;
 };
