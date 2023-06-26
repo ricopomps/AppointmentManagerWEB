@@ -52,7 +52,13 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
             type="text"
             placeholder="Nome"
             register={register}
-            registerOptions={{ required: "Campo Obrigatório" }}
+            registerOptions={{
+              required: "Campo Obrigatório",
+              validate: {
+                minLength: (n) => n.length > 4 || "Nome muito curto",
+                matchPattern: (n) => /^[A-Za-z]+$/.test(n) || "Nome inválido",
+              },
+            }}
             error={errors.name}
           />
           <TextInputField
@@ -61,16 +67,34 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
             type="text"
             placeholder="E-mail"
             register={register}
-            registerOptions={{ required: "Campo Obrigatório" }}
+            registerOptions={{
+              required: "Campo Obrigatório",
+              validate: {
+                maxLength: (v) =>
+                  v.length <= 50 || "O Email pode ter até apenas 50 caracteres",
+                matchPattern: (v) =>
+                  /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
+                  "Email inválido",
+              },
+            }}
             error={errors.email}
           />
+
           <TextInputField
             name="cpf"
             label="Cpf"
             type="text"
             placeholder="Cpf"
             register={register}
-            registerOptions={{ required: "Campo Obrigatório" }}
+            registerOptions={{
+              required: "Campo Obrigatório",
+              validate: {
+                matchPattern: (c) =>
+                  /^([0-9]{3}\.?[0-9]{3}\.?[0-9]{3}\-?[0-9]{2}|[0-9]{2}\.?[0-9]{3}\.?[0-9]{3}\/?[0-9]{4}\-?[0-9]{2})$/.test(
+                    c
+                  ) || "Cpf inválido",
+              },
+            }}
             error={errors.cpf}
           />
           <PhoneInputField
