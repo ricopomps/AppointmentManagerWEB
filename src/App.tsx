@@ -27,9 +27,7 @@ function App() {
       try {
         const user = await UsersApi.getLoggedInUser();
         setLoggedInUser(user);
-      } catch (error) {
-        console.error(error);
-      }
+      } catch (error) {}
     }
     fetchLoggedInUser();
   }, []);

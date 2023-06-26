@@ -24,7 +24,7 @@ const PhoneInputField = ({ error, control }: PhoneInputProps) => {
     return isValidPhoneNumber(value);
   };
   return (
-    <Form>
+    <Form.Group>
       <div>
         <Form.Label htmlFor="phone">Telefone</Form.Label>
         <Controller
@@ -48,7 +48,7 @@ const PhoneInputField = ({ error, control }: PhoneInputProps) => {
           <div className={stylesUtils.errorMessage}>{error.message}</div>
         )}
       </div>
-    </Form>
+    </Form.Group>
   );
 };
 export default PhoneInputField;
