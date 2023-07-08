@@ -1,4 +1,4 @@
-import { parse } from "date-fns";
+import { parse, isEqual } from "date-fns";
 import {
   ReactElement,
   createContext,
@@ -75,18 +75,32 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
 const useSelectedDayContext = (initialState: StateType) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setSelectedDay = useCallback((selectedDay: SelectedDay) => {
-    const selectedDate = parse(
-      selectedDay.day.toString(),
-      dateFormat,
-      new Date()
-    );
+  const setSelectedDay = useCallback(
+    (selectedDay: SelectedDay) => {
+      const selectedDate = parse(
+        selectedDay.day.toString(),
+        dateFormat,
+        new Date()
+      );
 
-    dispatch({
-      type: REDUCER_ACTION_TYPE.SET_SELECTED_DAY,
-      payload: { ...selectedDay, day: selectedDate },
-    });
-  }, []);
+      if (
+        state?.selectedDay?.day &&
+        state.selectedDay.day instanceof Date &&
+        isEqual(selectedDate, state.selectedDay?.day) &&
+        selectedDay.interval === state.selectedDay.interval
+      ) {
+        dispatch({
+          type: REDUCER_ACTION_TYPE.CLEAR_SELECTED_DAY,
+        });
+      } else {
+        dispatch({
+          type: REDUCER_ACTION_TYPE.SET_SELECTED_DAY,
+          payload: { ...selectedDay, day: selectedDate },
+        });
+      }
+    },
+    [state.selectedDay]
+  );
 
   const clearSelectedDay = useCallback(() => {
     dispatch({
@@ -98,18 +112,28 @@ const useSelectedDayContext = (initialState: StateType) => {
     dispatch({
       type: REDUCER_ACTION_TYPE.NEXT_WEEK,
     });
+    dispatch({
+      type: REDUCER_ACTION_TYPE.CLEAR_SELECTED_DAY,
+    });
   }, []);
 
   const previousWeek = useCallback(() => {
-    if (state.week > 0)
+    if (state.week > 0) {
       dispatch({
         type: REDUCER_ACTION_TYPE.PREVIOUS_WEEK,
       });
+      dispatch({
+        type: REDUCER_ACTION_TYPE.CLEAR_SELECTED_DAY,
+      });
+    }
   }, [state.week]);
 
   const resetWeek = useCallback(() => {
     dispatch({
       type: REDUCER_ACTION_TYPE.RESET_WEEK,
+    });
+    dispatch({
+      type: REDUCER_ACTION_TYPE.CLEAR_SELECTED_DAY,
     });
   }, []);
 
