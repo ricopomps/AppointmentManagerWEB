@@ -17,6 +17,9 @@ export interface SelectedDay {
 export enum REDUCER_ACTION_TYPE {
   SET_SELECTED_DAY,
   CLEAR_SELECTED_DAY,
+  NEXT_WEEK,
+  PREVIOUS_WEEK,
+  RESET_WEEK,
 }
 
 export type ReducerAction = {
@@ -26,9 +29,10 @@ export type ReducerAction = {
 
 type StateType = {
   selectedDay?: SelectedDay;
+  week: number;
 };
 
-export const initialState: StateType = { selectedDay: undefined };
+export const initialState: StateType = { selectedDay: undefined, week: 0 };
 
 const reducer = (state: StateType, action: ReducerAction): StateType => {
   switch (action.type) {
@@ -42,6 +46,24 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
       return {
         ...state,
         selectedDay: undefined,
+      };
+    }
+    case REDUCER_ACTION_TYPE.NEXT_WEEK: {
+      return {
+        ...state,
+        week: state.week + 1,
+      };
+    }
+    case REDUCER_ACTION_TYPE.PREVIOUS_WEEK: {
+      return {
+        ...state,
+        week: state.week - 1,
+      };
+    }
+    case REDUCER_ACTION_TYPE.RESET_WEEK: {
+      return {
+        ...state,
+        week: 0,
       };
     }
     default: {
@@ -72,7 +94,33 @@ const useSelectedDayContext = (initialState: StateType) => {
     });
   }, []);
 
-  return { state, setSelectedDay, clearSelectedDay };
+  const nextWeek = useCallback(() => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.NEXT_WEEK,
+    });
+  }, []);
+
+  const previousWeek = useCallback(() => {
+    if (state.week > 0)
+      dispatch({
+        type: REDUCER_ACTION_TYPE.PREVIOUS_WEEK,
+      });
+  }, [state.week]);
+
+  const resetWeek = useCallback(() => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.RESET_WEEK,
+    });
+  }, []);
+
+  return {
+    state,
+    setSelectedDay,
+    clearSelectedDay,
+    nextWeek,
+    previousWeek,
+    resetWeek,
+  };
 };
 
 type UseSelectedDayContextType = ReturnType<typeof useSelectedDayContext>;
@@ -81,6 +129,9 @@ const initialContextState: UseSelectedDayContextType = {
   state: initialState,
   setSelectedDay: (selectedDay: SelectedDay) => {},
   clearSelectedDay: () => {},
+  nextWeek: () => {},
+  previousWeek: () => {},
+  resetWeek: () => {},
 };
 
 export const SelectedDayContext =
@@ -103,15 +154,30 @@ export const SelectedDayProvider = ({
 
 type UseSelectedDayHookType = {
   selectedDay?: SelectedDay;
+  week: number;
   setSelectedDay: (selectedDay: SelectedDay) => void;
   clearSelectedDay: () => void;
+  nextWeek: () => void;
+  previousWeek: () => void;
+  resetWeek: () => void;
 };
 
 export const useSelectedDay = (): UseSelectedDayHookType => {
   const {
-    state: { selectedDay },
+    state: { selectedDay, week },
     setSelectedDay,
     clearSelectedDay,
+    nextWeek,
+    previousWeek,
+    resetWeek,
   } = useContext(SelectedDayContext);
-  return { selectedDay, setSelectedDay, clearSelectedDay };
+  return {
+    selectedDay,
+    week,
+    setSelectedDay,
+    clearSelectedDay,
+    nextWeek,
+    previousWeek,
+    resetWeek,
+  };
 };

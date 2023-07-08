@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 import NavBar from "./components/NavBar/NavBar";
 import SignUpModal from "./components/SignUpModal";
 import LoginModal from "./components/LoginModal";
@@ -15,6 +16,7 @@ import {
   SelectedDayProvider,
   initialState,
 } from "./context/SelectedDayContext";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -33,7 +35,11 @@ function App() {
   }, []);
   return (
     <>
-      <SelectedDayProvider selectedDay={initialState.selectedDay}>
+      <ToastContainer />
+      <SelectedDayProvider
+        selectedDay={initialState.selectedDay}
+        week={initialState.week}
+      >
         <BrowserRouter>
           <div>
             <NavBar

@@ -45,8 +45,8 @@ export function getWeekDayNames(): string[] {
   return weekDayNames;
 }
 
-export function getWeekDays(): Date[] {
-  const startDate = startOfWeek(new Date());
+export function getWeekDays(week: number): Date[] {
+  const startDate = addDays(startOfWeek(new Date()), 7 * week);
   const endDate = addDays(startDate, 6);
 
   const weekDaysDates = eachDayOfInterval({ start: startDate, end: endDate });
@@ -60,8 +60,8 @@ export const dayFormat = "dd/MM";
 
 export const hourFormat = "HH:mm";
 
-export function getWeekAndAppointments(): Week[] {
-  const days = getWeekDays();
+export function getWeekAndAppointments(week: number): Week[] {
+  const days = getWeekDays(week);
   return days.map((day) => {
     return { day: format(day, dateFormat) };
   });

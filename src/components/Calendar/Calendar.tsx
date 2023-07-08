@@ -15,19 +15,27 @@ import {
 import { useSelectedDay } from "../../context/SelectedDayContext";
 import * as AppointmentApi from "../../network/AppointmentApi";
 import { useEffect, useState } from "react";
+import PaginationComponent from "../Pagination";
 
 interface CalendarProps {
   refresh: boolean;
 }
 
 const Calendar = ({ refresh }: CalendarProps) => {
-  const { selectedDay, setSelectedDay } = useSelectedDay();
+  const {
+    selectedDay,
+    week: numWeek,
+    setSelectedDay,
+    nextWeek,
+    previousWeek,
+    resetWeek,
+  } = useSelectedDay();
   const [week, setWeek] = useState<Week[]>([]);
 
   useEffect(() => {
     async function getAppointmentsBetweenDates() {
       try {
-        const baseWeek = getWeekAndAppointments();
+        const baseWeek = getWeekAndAppointments(numWeek);
         const appointmentsFromWeek =
           await AppointmentApi.getAppointmentsBetweenDates({
             startDate: parse(
@@ -57,7 +65,7 @@ const Calendar = ({ refresh }: CalendarProps) => {
       }
     }
     getAppointmentsBetweenDates();
-  }, [refresh]);
+  }, [refresh, numWeek]);
 
   const intervalValues: Interval = {
     interval: "00:30:00",
@@ -67,8 +75,6 @@ const Calendar = ({ refresh }: CalendarProps) => {
     breakEndTime: "14:00:00",
   };
 
-  const numWeek = 0;
-
   const dayOfWeek = (index: number) =>
     format(
       add(startOfWeek(new Date()), { weeks: numWeek, days: index }),
@@ -77,27 +83,11 @@ const Calendar = ({ refresh }: CalendarProps) => {
 
   return (
     <>
-      {/* <PaginationComponent
-        onBack={() =>
-          numWeek > 0 &&
-          dispatch({
-            type: CHANGE_WEEK,
-            payload: { numWeek: numWeek - 1 },
-          })
-        }
-        onCenter={() =>
-          dispatch({
-            type: CHANGE_WEEK,
-            payload: { numWeek: 0 },
-          })
-        }
-        onFront={() =>
-          dispatch({
-            type: CHANGE_WEEK,
-            payload: { numWeek: numWeek + 1 },
-          })
-        }
-      ></PaginationComponent> */}
+      <PaginationComponent
+        onBack={previousWeek}
+        onCenter={resetWeek}
+        onFront={nextWeek}
+      ></PaginationComponent>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>

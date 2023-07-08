@@ -8,7 +8,7 @@ import { useState } from "react";
 import PhoneInputField from "./PhoneInputField";
 import { useSelectedDay } from "../../context/SelectedDayContext";
 import * as AppointmentApi from "../../network/AppointmentApi";
-
+import { toast } from "react-toastify";
 interface FormAppointmentProps {
   refresh: () => void;
 }
@@ -20,6 +20,7 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<AppointmentForm>();
   async function onSubmit(credentials: AppointmentForm) {
@@ -29,7 +30,9 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
       await AppointmentApi.appoint({
         appointmentForm: { ...credentials, ...selectedDay },
       });
+      toast.success("Agendamento marcado com sucesso!");
       refresh();
+      reset();
       clearSelectedDay();
     } catch (error) {
       if (error instanceof UnathorizedError) setErrorText(error.message);
@@ -56,7 +59,7 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
               required: "Campo Obrigatório",
               validate: {
                 minLength: (n) => n.length > 4 || "Nome muito curto",
-                matchPattern: (n) => /^[A-Za-z]+$/.test(n) || "Nome inválido",
+                // matchPattern: (n) => /^[A-Za-z]+$/.test(n) || "Nome inválido",
               },
             }}
             error={errors.name}
