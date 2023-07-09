@@ -14,6 +14,16 @@ export interface SelectedDay {
   day: Date | string;
 }
 
+export interface Clinic {
+  name: string;
+  _id: string;
+}
+
+export interface Dentist {
+  name: string;
+  _id: string;
+}
+
 export enum REDUCER_ACTION_TYPE {
   SET_SELECTED_DAY,
   CLEAR_SELECTED_DAY,
@@ -30,9 +40,16 @@ export type ReducerAction = {
 type StateType = {
   selectedDay?: SelectedDay;
   week: number;
+  selectedClinic?: Clinic;
+  selectedDentist?: Dentist;
 };
 
-export const initialState: StateType = { selectedDay: undefined, week: 0 };
+export const initialState: StateType = {
+  selectedDay: undefined,
+  week: 0,
+  selectedClinic: undefined,
+  selectedDentist: undefined,
+};
 
 const reducer = (state: StateType, action: ReducerAction): StateType => {
   switch (action.type) {
@@ -179,6 +196,8 @@ export const SelectedDayProvider = ({
 type UseSelectedDayHookType = {
   selectedDay?: SelectedDay;
   week: number;
+  selectedClinic?: Clinic;
+  selectedDentist?: Dentist;
   setSelectedDay: (selectedDay: SelectedDay) => void;
   clearSelectedDay: () => void;
   nextWeek: () => void;
@@ -188,7 +207,7 @@ type UseSelectedDayHookType = {
 
 export const useSelectedDay = (): UseSelectedDayHookType => {
   const {
-    state: { selectedDay, week },
+    state: { selectedDay, week, selectedClinic, selectedDentist },
     setSelectedDay,
     clearSelectedDay,
     nextWeek,
@@ -198,6 +217,8 @@ export const useSelectedDay = (): UseSelectedDayHookType => {
   return {
     selectedDay,
     week,
+    selectedClinic,
+    selectedDentist,
     setSelectedDay,
     clearSelectedDay,
     nextWeek,

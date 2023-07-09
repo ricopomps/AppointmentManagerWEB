@@ -27,12 +27,14 @@ const TextInputField = ({
     <Form.Group className="mb-3" controlId={name + "-input"}>
       <Form.Label>{label}</Form.Label>
       <Form.Control
-        {...props}
         {...register(name, registerOptions)}
+        {...props}
         isInvalid={!!error}
       >
         {options?.map((option) => (
-          <option value={option.value}>{option.key}</option>
+          <option key={option.key} value={option.value}>
+            {option.key}
+          </option>
         ))}
       </Form.Control>
       <Form.Control.Feedback type="invalid">

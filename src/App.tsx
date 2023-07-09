@@ -39,6 +39,8 @@ function App() {
       <SelectedDayProvider
         selectedDay={initialState.selectedDay}
         week={initialState.week}
+        selectedClinic={initialState.selectedClinic}
+        selectedDentist={initialState.selectedDentist}
       >
         <BrowserRouter>
           <div>
