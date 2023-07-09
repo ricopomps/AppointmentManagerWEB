@@ -17,10 +17,11 @@ export interface SelectedDay {
 export interface Clinic {
   name: string;
   _id: string;
+  dentists?: Dentist[];
 }
 
 export interface Dentist {
-  name: string;
+  username: string;
   _id: string;
 }
 
@@ -30,11 +31,13 @@ export enum REDUCER_ACTION_TYPE {
   NEXT_WEEK,
   PREVIOUS_WEEK,
   RESET_WEEK,
+  SET_SELECTED_CLINIC,
+  SET_SELECTED_DENTIST,
 }
 
 export type ReducerAction = {
   type: REDUCER_ACTION_TYPE;
-  payload?: SelectedDay;
+  payload?: any;
 };
 
 type StateType = {
@@ -81,6 +84,18 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
       return {
         ...state,
         week: 0,
+      };
+    }
+    case REDUCER_ACTION_TYPE.SET_SELECTED_CLINIC: {
+      return {
+        ...state,
+        selectedClinic: action.payload,
+      };
+    }
+    case REDUCER_ACTION_TYPE.SET_SELECTED_DENTIST: {
+      return {
+        ...state,
+        selectedDentist: action.payload,
       };
     }
     default: {
@@ -154,6 +169,20 @@ const useSelectedDayContext = (initialState: StateType) => {
     });
   }, []);
 
+  const setSelectedClinic = useCallback((clinic?: Clinic) => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.SET_SELECTED_CLINIC,
+      payload: clinic,
+    });
+  }, []);
+
+  const setSelectedDentist = useCallback((dentist?: Dentist) => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.SET_SELECTED_DENTIST,
+      payload: dentist,
+    });
+  }, []);
+
   return {
     state,
     setSelectedDay,
@@ -161,6 +190,8 @@ const useSelectedDayContext = (initialState: StateType) => {
     nextWeek,
     previousWeek,
     resetWeek,
+    setSelectedClinic,
+    setSelectedDentist,
   };
 };
 
@@ -173,6 +204,8 @@ const initialContextState: UseSelectedDayContextType = {
   nextWeek: () => {},
   previousWeek: () => {},
   resetWeek: () => {},
+  setSelectedClinic: (clinic?: Clinic) => {},
+  setSelectedDentist: (dentist?: Dentist) => {},
 };
 
 export const SelectedDayContext =
@@ -203,6 +236,8 @@ type UseSelectedDayHookType = {
   nextWeek: () => void;
   previousWeek: () => void;
   resetWeek: () => void;
+  setSelectedClinic: (clinic?: Clinic) => void;
+  setSelectedDentist: (dentist?: Dentist) => void;
 };
 
 export const useSelectedDay = (): UseSelectedDayHookType => {
@@ -213,6 +248,8 @@ export const useSelectedDay = (): UseSelectedDayHookType => {
     nextWeek,
     previousWeek,
     resetWeek,
+    setSelectedClinic,
+    setSelectedDentist,
   } = useContext(SelectedDayContext);
   return {
     selectedDay,
@@ -224,5 +261,7 @@ export const useSelectedDay = (): UseSelectedDayHookType => {
     nextWeek,
     previousWeek,
     resetWeek,
+    setSelectedClinic,
+    setSelectedDentist,
   };
 };

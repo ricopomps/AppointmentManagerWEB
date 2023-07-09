@@ -1,25 +1,46 @@
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import styles from "../styles/AppointmentSelector.module.css";
 import TextInputField from "./Form/TextInputField";
-import { useForm } from "react-hook-form";
-import { useSelectedDay } from "../context/SelectedDayContext";
+import { Clinic, Dentist, useSelectedDay } from "../context/SelectedDayContext";
+import * as ClinicsApi from "../network/ClinicsApi";
 
 interface AppointmentSelectorForm {
   clinic: string;
   dentist: string;
 }
 const AppointmentSelector = () => {
-  const { selectedClinic, selectedDentist } = useSelectedDay();
-  console.log("selectedClinic", selectedClinic);
+  const { setSelectedClinic, setSelectedDentist } = useSelectedDay();
+  const [clinics, setClinics] = useState<Clinic[] | undefined>(undefined);
+  const [dentists, setDentists] = useState<Dentist[] | undefined>(undefined);
+  useEffect(() => {
+    async function fetchClinics() {
+      try {
+        const clinicsReturn = await ClinicsApi.getClinics();
+        setClinics(clinicsReturn);
+        setDentists(clinicsReturn?.[0].dentists);
+        setValue("clinic", clinicsReturn?.[0]?._id || "");
+        setSelectedClinic(clinicsReturn?.[0]);
+        setValue("dentist", clinicsReturn?.[0].dentists?.[0]?._id || "");
+        setSelectedDentist(clinicsReturn?.[0].dentists?.[0]);
+      } catch (error) {}
+    }
+    fetchClinics();
+  }, []);
+
   const {
     register,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<AppointmentSelectorForm>({
     defaultValues: {
-      clinic: selectedClinic?._id || "",
-      dentist: selectedDentist?._id || "",
+      clinic: clinics?.[0]?._id || "",
+      dentist: clinics?.[0].dentists?.[0]?._id || "",
     },
   });
+
   return (
     <Card className={styles.selector}>
       <Container>
@@ -28,14 +49,22 @@ const AppointmentSelector = () => {
             <TextInputField
               name="clinic"
               label="Consultório"
-              options={[
-                { key: "consultorio 1", value: "1" },
-                { key: "consultorio 2", value: "2" },
-              ]}
+              options={
+                clinics &&
+                clinics.map((clinic) => ({
+                  key: clinic.name,
+                  value: clinic._id,
+                }))
+              }
               as="select"
               placeholder="Consultório"
               register={register}
-              onChange={() => console.log(selectedClinic)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                const clinic = clinics?.find((c) => c._id === e.target.value);
+                setDentists(clinic?.dentists);
+                setSelectedClinic(clinic);
+                setSelectedDentist(clinic?.dentists?.[0]);
+              }}
               registerOptions={{ required: "Campo Obrigatório" }}
               error={errors.clinic}
             />
@@ -45,13 +74,20 @@ const AppointmentSelector = () => {
               name="dentist"
               label="Dentista"
               as="select"
-              options={[
-                { key: "dentista 1", value: "1" },
-                { key: "dentista 2", value: "2" },
-              ]}
+              options={
+                dentists &&
+                dentists.map((dentist) => ({
+                  key: dentist.username,
+                  value: dentist._id,
+                }))
+              }
               placeholder="Dentista"
               register={register}
-              onChange={() => console.log("change")}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setSelectedDentist(
+                  dentists?.filter((d) => d._id === e.target.value)?.[0]
+                );
+              }}
               registerOptions={{ required: "Campo Obrigatório" }}
               error={errors.dentist}
             />
