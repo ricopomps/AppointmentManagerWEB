@@ -1,5 +1,5 @@
 import { endOfDay, startOfDay } from "date-fns";
-import { SelectedDay } from "../context/SelectedDayContext";
+import { Clinic, Dentist, SelectedDay } from "../context/SelectedDayContext";
 import { API } from "./api";
 
 export interface AppointmentForm {
@@ -16,7 +16,7 @@ interface GetAppointmentsBetweenDates {
 
 export async function getAppointmentsBetweenDates(
   dates: GetAppointmentsBetweenDates
-): Promise<(AppointmentForm & SelectedDay)[]> {
+): Promise<(AppointmentForm & SelectedDay & Clinic & Dentist)[]> {
   const response = await API.get("/api/appointments", {
     params: {
       startDate: startOfDay(dates.startDate),
@@ -28,14 +28,18 @@ export async function getAppointmentsBetweenDates(
 
 interface AppointmentCreationForm {
   appointmentForm: AppointmentForm & SelectedDay;
+  clinicId: string;
+  dentistId: string;
 }
-
 export async function appoint(
   appointment: AppointmentCreationForm
-): Promise<AppointmentForm & SelectedDay> {
-  const response = await API.post(
-    "/api/appointments",
-    appointment.appointmentForm
-  );
+): Promise<
+  AppointmentForm & SelectedDay & { clinicId: string } & { dentistId: string }
+> {
+  const response = await API.post("/api/appointments", {
+    ...appointment.appointmentForm,
+    clinicId: appointment.clinicId,
+    dentistId: appointment.dentistId,
+  });
   return response.data;
 }

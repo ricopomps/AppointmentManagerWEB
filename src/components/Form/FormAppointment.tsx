@@ -14,7 +14,8 @@ interface FormAppointmentProps {
 }
 
 const FormAppointment = ({ refresh }: FormAppointmentProps) => {
-  const { selectedDay, clearSelectedDay } = useSelectedDay();
+  const { selectedDay, selectedClinic, selectedDentist, clearSelectedDay } =
+    useSelectedDay();
   const [errorText, setErrorText] = useState<string | null>(null);
   const {
     register,
@@ -26,9 +27,14 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
   async function onSubmit(credentials: AppointmentForm) {
     try {
       setErrorText(null);
+
       if (!selectedDay) throw Error("Selecione uma data");
+      if (!selectedClinic?._id) throw Error("Selecione uma clinica");
+      if (!selectedDentist?._id) throw Error("Selecione um dentista");
       await AppointmentApi.appoint({
         appointmentForm: { ...credentials, ...selectedDay },
+        clinicId: selectedClinic._id,
+        dentistId: selectedDentist?._id,
       });
       toast.success("Agendamento marcado com sucesso!");
       refresh();
