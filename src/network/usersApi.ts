@@ -30,3 +30,8 @@ export async function login(credentials: LoginCredentials): Promise<User> {
 export async function logout() {
   await API.post("/api/users/logout");
 }
+
+export async function updateUser(userId: string, user: User): Promise<User> {
+  const response = await API.patch(`api/users/${userId}`, user);
+  return response.data;
+}

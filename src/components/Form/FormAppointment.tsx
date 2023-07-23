@@ -29,7 +29,7 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
       setErrorText(null);
 
       if (!selectedDay) throw Error("Selecione uma data");
-      if (!selectedClinic?._id) throw Error("Selecione uma clinica");
+      if (!selectedClinic?._id) throw Error("Selecione uma clínica");
       if (!selectedDentist?._id) throw Error("Selecione um dentista");
       await AppointmentApi.appoint({
         appointmentForm: { ...credentials, ...selectedDay },

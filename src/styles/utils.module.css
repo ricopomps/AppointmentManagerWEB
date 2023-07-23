@@ -27,3 +27,12 @@
 .errorMessage {
   color: var(--bs-form-invalid-border-color);
 }
+
+.flex {
+  display: flex;
+}
+
+.flexEnd {
+  display: flex;
+  justify-content: end;
+}

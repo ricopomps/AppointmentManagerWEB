@@ -15,8 +15,8 @@ const AppointmentList = ({}: AppointmentListProps) => {
   useEffect(() => {
     async function findAppointments() {
       try {
-        const appointmentsFromWeek = await AppointmentApi.findAppointments({});
-        setAppointments(appointmentsFromWeek.appointments);
+        const appointmentsData = await AppointmentApi.findAppointments({});
+        setAppointments(appointmentsData.appointments);
       } catch (error) {
         console.error(error);
       }

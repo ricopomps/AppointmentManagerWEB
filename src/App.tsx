@@ -17,6 +17,7 @@ import {
   initialState,
 } from "./context/SelectedDayContext";
 import AppointmentList from "./pages/AppointmentList";
+import ClinicsPage from "./pages/ClinicsPage";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -54,6 +55,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/agendamentos" element={<AppointmentList />} />
+                <Route path="/clinicas" element={<ClinicsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/*" element={<NotFoundPage />} />
               </Routes>

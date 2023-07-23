@@ -126,7 +126,7 @@ const FormAppointmentList = ({ onSubmit }: FormAppointmentListProps) => {
                         value: clinic._id,
                       }))}
                       as="select"
-                      placeholder="Selecione uma clinica"
+                      placeholder="Selecione uma clínica"
                       hasDefaultValue
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                         const disable = !e.target.value;
