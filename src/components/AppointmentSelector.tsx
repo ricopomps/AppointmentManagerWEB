@@ -32,7 +32,6 @@ const AppointmentSelector = () => {
   const {
     register,
     setValue,
-    getValues,
     formState: { errors },
   } = useForm<AppointmentSelectorForm>({
     defaultValues: {

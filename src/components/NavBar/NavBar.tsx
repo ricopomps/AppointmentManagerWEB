@@ -1,8 +1,8 @@
+import { Link } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { User } from "../../models/user";
 import NavBarLoggedInView from "./NavBarLoggedInView";
 import NavBarLoggedOutView from "./NavBarLoggedOutView";
-import { Link } from "react-router-dom";
 
 interface NavBarProps {
   loggedInUser: User | null;
@@ -20,13 +20,13 @@ const NavBar = ({
     <Navbar bg="primary" variant="dark" expand="sm" sticky="top">
       <Container>
         <Navbar.Brand as={Link} to="/">
-          Notas
+          Início
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
           <Nav>
-            <Nav.Link as={Link} to="/notes">
-              Notas
+            <Nav.Link as={Link} to="/agendamentos">
+              Agendamentos
             </Nav.Link>
             <Nav.Link as={Link} to="/privacy">
               Privacidade

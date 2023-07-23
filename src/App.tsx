@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Container } from "react-bootstrap";
 import NavBar from "./components/NavBar/NavBar";
 import SignUpModal from "./components/SignUpModal";
 import LoginModal from "./components/LoginModal";
 import { User } from "./models/user";
 import * as UsersApi from "./network/usersApi";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Container } from "react-bootstrap";
-import NotesPage from "./pages/NotesPages";
 import PrivacyPage from "./pages/PrivacyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import styles from "./styles/App.module.css";
@@ -16,7 +16,7 @@ import {
   SelectedDayProvider,
   initialState,
 } from "./context/SelectedDayContext";
-import "react-toastify/dist/ReactToastify.css";
+import AppointmentList from "./pages/AppointmentList";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
@@ -53,10 +53,7 @@ function App() {
             <Container className={styles.pageContainer}>
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route
-                  path="/notes"
-                  element={<NotesPage loggedInUser={loggedInUser} />}
-                />
+                <Route path="/agendamentos" element={<AppointmentList />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/*" element={<NotFoundPage />} />
               </Routes>

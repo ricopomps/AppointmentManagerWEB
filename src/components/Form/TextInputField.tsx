@@ -11,15 +11,18 @@ interface TextInputFieldProps {
   registerOptions?: RegisterOptions;
   error?: FieldError;
   options?: option[];
+  hasDefaultValue?: boolean;
   [x: string]: any;
 }
 
 const TextInputField = ({
   name,
   label,
+  placeholder,
   register,
   registerOptions,
   error,
+  hasDefaultValue,
   options,
   ...props
 }: TextInputFieldProps) => {
@@ -31,11 +34,16 @@ const TextInputField = ({
         {...props}
         isInvalid={!!error}
       >
-        {options?.map((option) => (
-          <option key={option.key} value={option.value}>
-            {option.key}
-          </option>
-        ))}
+        {options ? (
+          <>
+            {hasDefaultValue && <option value={""}>{placeholder}</option>}
+            {options.map((option) => (
+              <option key={option.key} value={option.value}>
+                {option.key}
+              </option>
+            ))}
+          </>
+        ) : null}
       </Form.Control>
       <Form.Control.Feedback type="invalid">
         {error?.message}
