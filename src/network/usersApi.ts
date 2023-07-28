@@ -35,3 +35,8 @@ export async function updateUser(userId: string, user: User): Promise<User> {
   const response = await API.patch(`api/users/${userId}`, user);
   return response.data;
 }
+
+export async function getDentists(): Promise<User[]> {
+  const response = await API.get(`api/users/dentists`);
+  return response.data;
+}

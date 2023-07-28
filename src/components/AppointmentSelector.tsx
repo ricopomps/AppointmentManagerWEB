@@ -4,7 +4,7 @@ import { Card, Container, Row, Col } from "react-bootstrap";
 import styles from "../styles/AppointmentSelector.module.css";
 import TextInputField from "./Form/TextInputField";
 import { Clinic, Dentist, useSelectedDay } from "../context/SelectedDayContext";
-import * as ClinicsApi from "../network/ClinicsApi";
+import * as ClinicsApi from "../network/clinicsApi";
 
 interface AppointmentSelectorForm {
   clinic: string;

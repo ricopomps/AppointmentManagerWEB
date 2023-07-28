@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button, ListGroup, ListGroupItem, Table } from "react-bootstrap";
 import { format, parse, parseISO } from "date-fns";
-import * as AppointmentApi from "../network/AppointmentApi";
+import * as AppointmentApi from "../network/appointmentApi";
 import { dateFormat } from "../utils/calendarUtils";
 import { Appointment } from "../models/appointment";
 import FormAppointmentList from "../components/Form/FormAppointmentList";
 import styles from "../styles/AppointmentListPage.module.css";
-import { findAppointmentsForm } from "../network/AppointmentApi";
+import { findAppointmentsForm } from "../network/appointmentApi";
 
 interface AppointmentListProps {}
 const AppointmentList = ({}: AppointmentListProps) => {

@@ -3,11 +3,12 @@ import { BiClinic } from "react-icons/bi";
 import { FaUserMd } from "react-icons/fa";
 import { AiFillPlusCircle, AiOutlineEdit } from "react-icons/ai";
 import { Col, Container, ListGroup, ListGroupItem, Row } from "react-bootstrap";
-import * as ClinicApi from "../network/ClinicsApi";
+import * as ClinicApi from "../network/clinicsApi";
 import { Clinic, Dentist } from "../context/SelectedDayContext";
 import styles from "../styles/ClinicsPage.module.css";
 import stylesUtils from "../styles/utils.module.css";
 import ClinicEditModal from "../components/Modal/ClinicEditModal";
+import AddDentistModal from "../components/Modal/AddDentistModal";
 
 interface ClinicsPageProps {}
 
@@ -28,6 +29,8 @@ const ClinicsPage = ({}: ClinicsPageProps) => {
     undefined
   );
   const [showAddDentistDialog, setShowAddDentistDialog] = useState(false);
+  const [clinicId, setClinicId] = useState<string>("");
+
   useEffect(() => {
     async function findAppointments() {
       try {
@@ -39,6 +42,7 @@ const ClinicsPage = ({}: ClinicsPageProps) => {
     }
     findAppointments();
   }, []);
+
   const onClick = (index: number) => {
     if (index === selected) return setSelected(null);
     setSelected(index);
@@ -57,7 +61,12 @@ const ClinicsPage = ({}: ClinicsPageProps) => {
               </Col>
               <Col className={stylesUtils.flexEnd}>
                 <AiFillPlusCircle
-                  onClick={() => setShowAddClinicDialog(true)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSelected(index);
+                    setClinicId(clinicId);
+                    setShowAddDentistDialog(true);
+                  }}
                   className={styles.plusIcon}
                   size={30}
                 />
@@ -70,6 +79,23 @@ const ClinicsPage = ({}: ClinicsPageProps) => {
           </Container>
         </ListGroupItem>
         {active && <DentistGroupItem dentists={clinic.dentists} />}
+        {showAddDentistDialog && active && (
+          <AddDentistModal
+            clinicId={clinic._id}
+            onDismiss={() => setShowAddDentistDialog(false)}
+            onSaved={(updatedClinic) => {
+              setClinics(
+                clinics &&
+                  clinics.map((existingClinic) =>
+                    existingClinic._id === updatedClinic._id
+                      ? updatedClinic
+                      : existingClinic
+                  )
+              );
+              setShowAddDentistDialog(false);
+            }}
+          />
+        )}
       </>
     );
   };

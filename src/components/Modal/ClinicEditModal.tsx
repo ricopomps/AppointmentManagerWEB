@@ -1,6 +1,6 @@
 import { Button, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import * as ClinicsApi from "../../network/ClinicsApi";
+import * as ClinicsApi from "../../network/clinicsApi";
 import TextInputField from "../Form/TextInputField";
 import { Clinic } from "../../context/SelectedDayContext";
 

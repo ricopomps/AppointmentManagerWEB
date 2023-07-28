@@ -13,7 +13,7 @@ import {
   dateFormat,
 } from "../../utils/calendarUtils";
 import { useSelectedDay } from "../../context/SelectedDayContext";
-import * as AppointmentApi from "../../network/AppointmentApi";
+import * as AppointmentApi from "../../network/appointmentApi";
 import { useEffect, useState } from "react";
 import PaginationComponent from "../Pagination";
 

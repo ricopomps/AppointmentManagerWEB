@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { RiFilterFill, RiFilterLine } from "react-icons/ri";
 import TextInputField from "./TextInputField";
 import stylesUtils from "../../styles/utils.module.css";
-import { findAppointmentsForm } from "../../network/AppointmentApi";
-import * as ClinicsApi from "../../network/ClinicsApi";
+import { findAppointmentsForm } from "../../network/appointmentApi";
+import * as ClinicsApi from "../../network/clinicsApi";
 import { Clinic, Dentist } from "../../context/SelectedDayContext";
 interface FormAppointmentListProps {
   onSubmit: (filter: findAppointmentsForm) => void;

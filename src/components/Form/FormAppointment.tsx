@@ -2,12 +2,12 @@ import { Alert, Button, Card, Form } from "react-bootstrap";
 import TextInputField from "./TextInputField";
 import { useForm } from "react-hook-form";
 import stylesUtils from "../../styles/utils.module.css";
-import { AppointmentForm } from "../../network/AppointmentApi";
+import { AppointmentForm } from "../../network/appointmentApi";
 import { UnathorizedError } from "../../errors/http_errors";
 import { useState } from "react";
 import PhoneInputField from "./PhoneInputField";
 import { useSelectedDay } from "../../context/SelectedDayContext";
-import * as AppointmentApi from "../../network/AppointmentApi";
+import * as AppointmentApi from "../../network/appointmentApi";
 import { toast } from "react-toastify";
 interface FormAppointmentProps {
   refresh: () => void;

@@ -18,3 +18,14 @@ export async function updateClinic(
   const response = await API.patch(`/api/clinics/${clinicId}`, clinic);
   return response.data;
 }
+
+export async function addUserToClinic(
+  clinicId: string,
+  userId: string
+): Promise<Clinic> {
+  const response = await API.patch(`/api/clinics/adduser`, {
+    clinicId,
+    userId,
+  });
+  return response.data;
+}
