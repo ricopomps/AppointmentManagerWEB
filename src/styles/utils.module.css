@@ -36,3 +36,7 @@
   display: flex;
   justify-content: end;
 }
+
+.dangerColor {
+  color: red;
+}

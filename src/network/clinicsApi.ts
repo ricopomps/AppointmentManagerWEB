@@ -29,3 +29,14 @@ export async function addUserToClinic(
   });
   return response.data;
 }
+
+export async function removeUserFromClinic(
+  clinicId: string,
+  userId: string
+): Promise<Clinic> {
+  const response = await API.patch(`/api/clinics/removeUser`, {
+    clinicId,
+    userId,
+  });
+  return response.data;
+}
