@@ -1,13 +1,13 @@
 import { Clinic } from "../context/SelectedDayContext";
-import { API } from "./api";
+import { getApi } from "./api";
 
 export async function getClinics(): Promise<Clinic[]> {
-  const response = await API.get("/api/clinics");
+  const response = await getApi().get("/api/clinics");
   return response.data;
 }
 
 export async function createClinic(clinic: Clinic): Promise<Clinic> {
-  const response = await API.post("/api/clinics", clinic);
+  const response = await getApi().post("/api/clinics", clinic);
   return response.data;
 }
 
@@ -15,7 +15,7 @@ export async function updateClinic(
   clinicId: string,
   clinic: Clinic
 ): Promise<Clinic> {
-  const response = await API.patch(`/api/clinics/${clinicId}`, clinic);
+  const response = await getApi().patch(`/api/clinics/${clinicId}`, clinic);
   return response.data;
 }
 
@@ -23,7 +23,7 @@ export async function addUserToClinic(
   clinicId: string,
   userId: string
 ): Promise<Clinic> {
-  const response = await API.patch(`/api/clinics/adduser`, {
+  const response = await getApi().patch(`/api/clinics/adduser`, {
     clinicId,
     userId,
   });
@@ -34,7 +34,7 @@ export async function removeUserFromClinic(
   clinicId: string,
   userId: string
 ): Promise<Clinic> {
-  const response = await API.patch(`/api/clinics/removeUser`, {
+  const response = await getApi().patch(`/api/clinics/removeUser`, {
     clinicId,
     userId,
   });

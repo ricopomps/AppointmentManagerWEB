@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { User } from "../models/user";
 import { LoginCredentials } from "../network/usersApi";
-import * as UsersApi from "../network/usersApi";
+import * as AuthApi from "../network/authApi";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 import TextInputField from "./Form/TextInputField";
 import stylesUtils from "../styles/utils.module.css";
@@ -22,7 +22,7 @@ const LoginModal = ({ onDismiss, onLoginSuccessful }: LoginModalProps) => {
 
   async function onSubmit(credentials: LoginCredentials) {
     try {
-      const user = await UsersApi.login(credentials);
+      const user = await AuthApi.login(credentials);
       onLoginSuccessful(user);
     } catch (error) {
       if (error instanceof UnathorizedError) setErrorText(error.message);

@@ -1,8 +1,8 @@
-import { API } from "./api";
+import { getApi } from "./api";
 import { User } from "../models/user";
 
 export async function getLoggedInUser(): Promise<User> {
-  const response = await API.get("/api/users");
+  const response = await getApi().get("/api/users");
   return response.data;
 }
 
@@ -13,7 +13,7 @@ export interface SignUpCredentials {
 }
 
 export async function signUp(credentials: SignUpCredentials): Promise<User> {
-  const response = await API.post("/api/users/signup", credentials);
+  const response = await getApi().post("/api/users/signup", credentials);
   return response.data;
 }
 
@@ -22,21 +22,21 @@ export interface LoginCredentials {
   password: string;
 }
 
-export async function login(credentials: LoginCredentials): Promise<User> {
-  const response = await API.post("/api/users/login", credentials);
-  return response.data;
-}
+// export async function login(credentials: LoginCredentials): Promise<User> {
+//   const response = await getApi().post("/api/users/login", credentials);
+//   return response.data;
+// }
 
-export async function logout() {
-  await API.post("/api/users/logout");
-}
+// export async function logout() {
+//   await getApi().post("/api/users/logout");
+// }
 
 export async function updateUser(userId: string, user: User): Promise<User> {
-  const response = await API.patch(`api/users/${userId}`, user);
+  const response = await getApi().patch(`api/users/${userId}`, user);
   return response.data;
 }
 
 export async function getDentists(): Promise<User[]> {
-  const response = await API.get(`api/users/dentists`);
+  const response = await getApi().get(`api/users/dentists`);
   return response.data;
 }
