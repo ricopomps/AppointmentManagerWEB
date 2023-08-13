@@ -24,9 +24,9 @@ const LoginModal = ({ onDismiss, onLoginSuccessful }: LoginModalProps) => {
     try {
       const user = await AuthApi.login(credentials);
       onLoginSuccessful(user);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof UnathorizedError) setErrorText(error.message);
-      else alert(error);
+      else alert(error?.message);
       console.error(error);
     }
   }
