@@ -3,9 +3,6 @@ import { add, format, isSameDay, parse, startOfWeek, toDate } from "date-fns";
 import { generateIntervals, Interval } from "../../utils/prepareIntervals";
 import CalendarDay from "./CalendarDay/CalendarDay";
 import {
-  Subtitle,
-  getTooltip,
-  check,
   dayFormat,
   Week,
   getWeekDayNames,
@@ -15,26 +12,30 @@ import {
 import { useSelectedDay } from "../../context/SelectedDayContext";
 import * as AppointmentApi from "../../network/appointmentApi";
 import { useEffect, useState } from "react";
-import PaginationComponent from "../Pagination";
-
-interface CalendarProps {
-  refresh: boolean;
+import styles from "../../styles/DentistCalendar.module.css";
+interface DentistCalendarProps {
+  refresh?: boolean;
+  intervalValues: string[][];
+  selectedDay: number;
+  setSelectedDay: (day: number) => void;
+  maxSlotCount: number;
 }
+
 export interface WeekIntervals {
   day: number;
   interval: Interval;
 }
 
-const Calendar = ({ refresh }: CalendarProps) => {
-  const {
-    selectedDay,
-    week: numWeek,
-    setSelectedDay,
-    nextWeek,
-    previousWeek,
-    resetWeek,
-  } = useSelectedDay();
+const DentistCalendar = ({
+  refresh,
+  intervalValues,
+  selectedDay,
+  setSelectedDay,
+  maxSlotCount,
+}: DentistCalendarProps) => {
+  const { week: numWeek } = useSelectedDay();
   const [week, setWeek] = useState<Week[]>([]);
+  //   const [values, setValues] = useState<string[][]>([[]]);
 
   useEffect(() => {
     async function getAppointmentsBetweenDates() {
@@ -71,65 +72,42 @@ const Calendar = ({ refresh }: CalendarProps) => {
     getAppointmentsBetweenDates();
   }, [refresh, numWeek]);
 
-  const intervalValues: Interval = {
-    interval: "00:30:00",
-    startTime: "08:00:00",
-    endTime: "18:00:00",
-    breakStartTime: "12:00:00",
-    breakEndTime: "14:00:00",
-  };
-
   const dayOfWeek = (index: number) =>
     format(
       add(startOfWeek(new Date()), { weeks: numWeek, days: index }),
       dayFormat
     );
+  console.log(intervalValues);
 
+  console.log("maxSlotCount", maxSlotCount);
+  console.log("values", intervalValues);
   return (
     <>
-      <PaginationComponent
-        onBack={previousWeek}
-        onCenter={resetWeek}
-        onFront={nextWeek}
-      ></PaginationComponent>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
             {getWeekDayNames().map((dia, index) => (
-              <th key={index}>{`${dia} - ${dayOfWeek(index)}`}</th>
+              <th
+                key={index}
+                className={index === selectedDay ? styles.selected : ""}
+                onClick={() => setSelectedDay(index)}
+              >{`${dia} - ${dayOfWeek(index)}`}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {generateIntervals(intervalValues).map((interval, index) => (
-            <tr key={index}>
-              {week.map((week, index) => {
-                const checking = check(interval, week);
-                return (
-                  <td key={index}>
-                    <CalendarDay
-                      Vacant={checking}
-                      tooltip={getTooltip(checking)}
-                      disabled={checking === Subtitle.Occupied}
-                      selected={
-                        selectedDay?.index === index &&
-                        selectedDay?.interval === interval
-                      }
-                      onClick={() => {
-                        setSelectedDay({ index, interval, day: week.day });
-                      }}
-                    >
-                      {interval}
-                    </CalendarDay>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
+          {maxSlotCount > 0 &&
+            [...Array(maxSlotCount)].map((_, timeIndex) => (
+              <tr key={timeIndex}>
+                {intervalValues.map((timeSlots, dayIndex) => (
+                  <td key={dayIndex}>{timeSlots?.[timeIndex] || ""}</td>
+                ))}
+              </tr>
+            ))}
         </tbody>
       </Table>
     </>
   );
 };
 
-export default Calendar;
+export default DentistCalendar;

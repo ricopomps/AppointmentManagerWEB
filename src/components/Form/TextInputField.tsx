@@ -41,7 +41,7 @@ const TextInputField = ({
       >
         {options ? (
           <>
-            {hasDefaultValue && <option>{placeholder}</option>}
+            {hasDefaultValue && <option value={""}>{placeholder}</option>}
             {options.map((option) => (
               <option key={option.key} value={option.value}>
                 {option.key}

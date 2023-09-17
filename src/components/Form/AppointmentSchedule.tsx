@@ -11,9 +11,10 @@ import TimePicker from "./TimePicker";
 interface AppointmentScheduleProps {
   clinic?: Clinic;
   day: string;
+  onSubmitSucess: (credentials: AppointmentScheduleForm) => void;
 }
 
-interface AppointmentScheduleForm {
+export interface AppointmentScheduleForm {
   day: string;
   appointmentHourTime: number;
   initialHourTime: string;
@@ -24,11 +25,14 @@ interface AppointmentScheduleForm {
   endMinuteTime: string;
   initialBreakMinuteTime: string;
   endBreakMinuteTime: string;
-  time: string;
   clinic?: Clinic;
 }
 
-const AppointmentSchedule = ({ clinic, day }: AppointmentScheduleProps) => {
+const AppointmentSchedule = ({
+  clinic,
+  day,
+  onSubmitSucess,
+}: AppointmentScheduleProps) => {
   const [errorText, setErrorText] = useState<string | null>(null);
 
   const {
@@ -41,6 +45,7 @@ const AppointmentSchedule = ({ clinic, day }: AppointmentScheduleProps) => {
     try {
       credentials.clinic = clinic;
       credentials.day = day;
+      onSubmitSucess(credentials);
       toast.success(JSON.stringify(credentials));
     } catch (error) {
       if (error instanceof UnathorizedError) setErrorText(error.message);

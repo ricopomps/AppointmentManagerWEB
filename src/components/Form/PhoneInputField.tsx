@@ -26,7 +26,7 @@ const PhoneInputField = ({ error, control }: PhoneInputProps) => {
   return (
     <Form.Group>
       <div>
-        <Form.Label htmlFor="phone">Telefone</Form.Label>
+        <Form.Label htmlFor="phone">Telefone *</Form.Label>
         <Controller
           name="phone"
           control={control}

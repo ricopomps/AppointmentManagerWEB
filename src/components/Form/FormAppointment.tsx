@@ -57,7 +57,7 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           <TextInputField
             name="name"
-            label="Nome"
+            label="Nome *"
             type="text"
             placeholder="Nome"
             register={register}
@@ -77,11 +77,11 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
             placeholder="E-mail"
             register={register}
             registerOptions={{
-              required: "Campo Obrigatório",
               validate: {
                 maxLength: (v) =>
                   v.length <= 50 || "O Email pode ter até apenas 50 caracteres",
                 matchPattern: (v) =>
+                  !v ||
                   /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
                   "Email inválido",
               },
@@ -91,7 +91,7 @@ const FormAppointment = ({ refresh }: FormAppointmentProps) => {
 
           <TextInputField
             name="cpf"
-            label="Cpf"
+            label="Cpf *"
             type="text"
             placeholder="Cpf"
             register={register}
