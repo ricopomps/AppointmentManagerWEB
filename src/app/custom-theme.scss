@@ -18,6 +18,7 @@ $form-file-button-bg: $surface-bg;
 $navbar-dark-color: $body-color;
 $navbar-dark-hover-color: white;
 $navbar-dark-active-color: white;
+$nav-tabs-link-active-color: $body-color;
 $tooltip-bg: $surface-bg;
 $tooltip-color: $body-color;
 $pagination-bg: $surface-bg;
@@ -37,6 +38,10 @@ $enable-negative-margins: true;
 @import "~bootstrap/scss/bootstrap";
 
 @import "~react-toastify/scss/_variables";
+
+// .nav-tabs {
+//   border-bottom: 2px solid red; /* Change this to your desired color */
+// }
 
 :root {
   --toastify-icon-color-success: #{$primary};
