@@ -1,5 +1,9 @@
 export interface User {
-  username: string;
-  email: string;
-  _id?: string;
+  _id: string;
+  username?: string;
+  email?: string;
+  displayName?: string;
+  about?: string;
+  profilePicUrl?: string;
+  createdAt: string;
 }

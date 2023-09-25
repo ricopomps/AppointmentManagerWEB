@@ -1,4 +1,4 @@
-import { format, addMinutes, startOfDay, isBefore } from "date-fns";
+import { addMinutes, format, isBefore, startOfDay } from "date-fns";
 
 export interface Interval {
   interval: string;
