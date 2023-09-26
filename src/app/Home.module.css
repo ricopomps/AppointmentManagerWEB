@@ -45,3 +45,7 @@
 .border {
   border-right: 1px solid;
 }
+
+.dentistImage {
+  min-width: 80px;
+}

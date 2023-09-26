@@ -2,18 +2,28 @@
 
 import logo from "@/assets/images/logo.png";
 import ProfileImage from "@/components/ProfileImage";
+import { User } from "@/models/user";
+import * as UsersApi from "@/network/api/user";
 import { generateIntervals } from "@/utils/prepareIntervals";
 import { capitalizeFirstLetter } from "@/utils/utils";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Button, Col, Nav, Row } from "react-bootstrap";
 import styles from "./Home.module.css";
-
 export interface Interval {
   interval: string;
   startTime: string;
   endTime: string;
   breakStartTime?: string;
   breakEndTime?: string;
+}
+
+interface DentistSchedulesInterface {
+  dentist: User;
+  schedules: {
+    day: number;
+    intervals: string[];
+  }[];
 }
 
 export default function Home() {
@@ -60,7 +70,7 @@ export default function Home() {
   );
 }
 
-function DentistSchedules() {
+async function DentistSchedules() {
   const intervalValues: Interval = {
     interval: "00:30:00",
     startTime: "08:00:00",
@@ -75,19 +85,23 @@ function DentistSchedules() {
     day: week + 1,
     intervals: generateIntervals(intervalValues),
   }));
-
-  const dentists = [
-    {
-      dentist: "Julia",
-      schedules: data,
-    },
-    {
-      dentist: "Naty",
-      schedules: data,
-    },
-  ];
+  const [dentists, setDentists] = useState<DentistSchedulesInterface[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const dentistsResponse = await UsersApi.findDentists();
+      console.log(dentistsResponse);
+      setDentists(
+        dentistsResponse.map((dentist) => ({
+          dentist,
+          schedules: data,
+        }))
+      );
+    };
+    fetchData();
+  }, []);
 
   const day = 1;
+  if (dentists.length === 0) return <></>;
   return (
     <div>
       {dentists.map((dentist) => {
@@ -96,9 +110,11 @@ function DentistSchedules() {
         );
         return (
           <div className="d-flex gap-2 p-2">
-            <div className="d-flex flex-column justify-content-center">
+            <div
+              className={`d-flex flex-column justify-content-center ${styles.dentistImage}`}
+            >
               <ProfileImage />
-              <p>{dentist.dentist}</p>
+              <p>{dentist.dentist.username}</p>
             </div>
             <div className="d-flex gap-2">
               <Col className="p-2 ">
@@ -124,50 +140,59 @@ function DentistSchedules() {
 }
 
 function ClinicView() {
+  const [selectedClinic, setSelectedClinic] = useState({
+    name: "Abreu e lima",
+    address: "Na praça de abreu",
+  });
   const consultorios = [
-    { name: "Abreu e lima" },
-    { name: "Igarassu" },
-    { name: "Consultório novo" },
+    { name: "Abreu e lima", address: "Na praça de abreu" },
+    { name: "Igarassu", address: "No lado do mercado de Igarassu" },
+    { name: "Consultório novo", address: "Sala 1605" },
   ];
   return (
     <div className={`p-4 ${styles.border}`}>
       <Nav variant="tabs" defaultActiveKey={1}>
         {consultorios.map((consultorio) => (
           <Nav.Item key={consultorio.name}>
-            <Nav.Link eventKey={consultorio.name}>
+            <Nav.Link
+              eventKey={consultorio.name}
+              onClick={() => setSelectedClinic(consultorio)}
+            >
               {capitalizeFirstLetter(consultorio.name)}
             </Nav.Link>
           </Nav.Item>
         ))}
       </Nav>
       <>
-        <Row>
-          <Col sm="auto">
-            <Image
-              src={logo}
-              width={200}
-              height={200}
-              alt={`Profile pic user: ${"username"}`}
-              priority
-              className={`rounded ${styles.profilePic}`}
-            />
-          </Col>
-          <Col className="mt-2 mt-sm-0">
-            <h1>{"displayName"}</h1>
-            <div>
-              <strong>Username: </strong>
-              {"username"}
-            </div>
-            <div>
-              <strong>User since: </strong>
-              {"formatDate(createdAt)"}
-            </div>
-            <div className="pre-line">
-              <strong>About me: </strong> <br />
-              {"about" || "This user hasn't shared any info yet"}
-            </div>
-          </Col>
-        </Row>
+        {selectedClinic && (
+          <Row>
+            <Col sm="auto">
+              <Image
+                src={logo}
+                width={200}
+                height={200}
+                alt={`Profile pic user: ${"username"}`}
+                priority
+                className={`rounded ${styles.profilePic}`}
+              />
+            </Col>
+            <Col className="mt-2 mt-sm-0">
+              <h1>{selectedClinic.name}</h1>
+              <div>
+                <strong>Nome: </strong>
+                {selectedClinic.name}
+              </div>
+              <div>
+                <strong>Endereço: </strong>
+                {selectedClinic.address}
+              </div>
+              <div className="pre-line">
+                <strong>About me: </strong> <br />
+                {"about" || "This user hasn't shared any info yet"}
+              </div>
+            </Col>
+          </Row>
+        )}
       </>
     </div>
   );

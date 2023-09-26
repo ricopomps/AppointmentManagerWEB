@@ -75,3 +75,15 @@ export async function resetPassword(credentials: ResetPasswordValues) {
   );
   return response.data;
 }
+
+export async function findDentists() {
+  const response = await api.get<User[]>(`${baseUrl}/dentists`);
+
+  return response.data;
+}
+
+export async function findDentistsByClinic(clinicId: string) {
+  const response = await api.get<User[]>(`${baseUrl}/dentists/${clinicId}`);
+
+  return response.data;
+}
