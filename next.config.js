@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: "build",
   reactStrictMode: true,
   images: {
     domains: ["localhost", "hpm58d6xookcs2il.public.blob.vercel-storage.com"],
