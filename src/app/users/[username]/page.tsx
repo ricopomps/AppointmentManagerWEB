@@ -4,7 +4,6 @@ import { User } from "@/models/user";
 import * as UsersApi from "@/network/api/user";
 import { NotFoundError } from "@/network/http-errors";
 import { formatDate } from "@/utils/utils";
-import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import UpdateUserProfileSection from "./UpdateUserProfileSection";
@@ -29,14 +28,14 @@ const getUser = cache(async (username: string) => {
   }
 });
 
-export async function generateMetadata({
-  params: { username },
-}: UserProfilePageProps): Promise<Metadata> {
-  const user = await getUser(username);
-  return {
-    title: `${user.username} - Blog`,
-  };
-}
+// export async function generateMetadata({
+//   params: { username },
+// }: UserProfilePageProps): Promise<Metadata> {
+//   const user = await getUser(username);
+//   return {
+//     title: `${user.username} - Blog`,
+//   };
+// }
 
 export default async function UserProfilePage({
   params: { username },
