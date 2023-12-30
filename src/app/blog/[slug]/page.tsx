@@ -4,7 +4,6 @@ import Markdown from "@/components/markdown/Markdown";
 import * as BlogApi from "@/network/api/blog";
 import { NotFoundError } from "@/network/http-errors";
 import { formatDate } from "@/utils/utils";
-import { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,24 +34,24 @@ const getPost = (slug: string) =>
     { tags: [slug] }
   )(slug);
 
-export async function generateMetadata({
-  params: { slug },
-}: BlogPostPageProps): Promise<Metadata> {
-  const blogPost = await getPost(slug);
+// export async function generateMetadata({
+//   params: { slug },
+// }: BlogPostPageProps): Promise<Metadata> {
+//   const blogPost = await getPost(slug);
 
-  return {
-    title: `${blogPost.title} - Blog`,
-    description: blogPost.summary,
-    openGraph: {
-      images: [{ url: blogPost.featuredImageUrl }],
-    },
-  };
-}
+//   return {
+//     title: `${blogPost.title} - Blog`,
+//     description: blogPost.summary,
+//     openGraph: {
+//       images: [{ url: blogPost.featuredImageUrl }],
+//     },
+//   };
+// }
 
-export async function generateStaticParams() {
-  const slugs = await BlogApi.getAllBlogPostsSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+// export async function generateStaticParams() {
+//   const slugs = await BlogApi.getAllBlogPostsSlugs();
+//   return slugs.map((slug) => ({ slug }));
+// }
 
 export default async function BlogPostPage({
   params: { slug },
