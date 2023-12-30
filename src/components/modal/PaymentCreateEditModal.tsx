@@ -4,7 +4,6 @@ import { handleError } from "@/utils/utils";
 import { requiredStringSchema } from "@/utils/validation";
 import { Payment } from "@prisma/client";
 import { format, parse } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 import { Alert, Form, Modal } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -197,7 +196,6 @@ export default function PaymentCreateEditModal({
             register={register("createdAt", { required: "Campo obrigatório" })}
             label="Data"
             type="date"
-            defaulValue={format(new Date(), "yyyy-MM-dd", { locale: ptBR })}
             placeholder="Data"
             lang="pt-br"
             error={errors.createdAt}

@@ -45,7 +45,11 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const payments = await prisma.payment.findMany();
+    const payments = await prisma.payment.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
     return NextResponse.json(payments, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: `Error ` }, { status: 500 });

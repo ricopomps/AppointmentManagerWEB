@@ -46,6 +46,7 @@ export default function Home() {
   useEffect(() => {
     const getData = async () => {
       const payments = await UsersApi.getPayments();
+      console.log(JSON.stringify(payments));
       setPayments(payments);
     };
     getData();

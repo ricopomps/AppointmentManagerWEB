@@ -37,6 +37,9 @@ export default function NavBar() {
             <Nav.Link as={Link} active={pathname === "/"} href="/">
               Home
             </Nav.Link>
+            <Nav.Link as={Link} active={pathname === "/chart"} href="/chart">
+              Gráficos
+            </Nav.Link>
           </Nav>
           {user ? <LoggedInView user={user} /> : <LoggedOutView />}
         </Navbar.Collapse>
