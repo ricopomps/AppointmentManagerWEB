@@ -47,7 +47,7 @@ const TextInputField = ({
         {options ? (
           <>
             {hasDefaultValue && (
-              <option value={undefined} disabled={!nullable} selected>
+              <option value={""} disabled={!nullable} selected>
                 {placeholder}
               </option>
             )}

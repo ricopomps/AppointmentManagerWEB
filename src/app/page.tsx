@@ -5,7 +5,11 @@ import PaymentCreateEditModal from "@/components/modal/PaymentCreateEditModal";
 import { User } from "@/models/user";
 import * as UsersApi from "@/network/api/user";
 import { generateIntervals } from "@/utils/prepareIntervals";
-import { capitalizeFirstLetter, formatDate } from "@/utils/utils";
+import {
+  capitalizeFirstLetter,
+  formatCurrency,
+  formatDate,
+} from "@/utils/utils";
 import { Payment } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { Button, Col, Tab, Table } from "react-bootstrap";
@@ -32,6 +36,7 @@ export default function Home() {
     name: "Todos",
     id: "0",
   });
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [paymentToEdit, setPaymentToEdit] = useState<Payment | undefined>(
     undefined
@@ -53,22 +58,84 @@ export default function Home() {
   ];
 
   function returnPayments() {
-    if (payments.length === 0) return [];
+    let paymentsToReturn: Payment[] = [];
+    if (payments.length === 0) return paymentsToReturn;
     if (selectedDentist.id === "0") {
-      return payments;
+      paymentsToReturn = payments;
     } else {
-      return payments.filter((payment) => payment.userId == selectedDentist.id);
+      paymentsToReturn = payments.filter(
+        (payment) => payment.userId == selectedDentist.id
+      );
     }
+    if (selectedMonth) {
+      paymentsToReturn = getPaymentsForMonth(paymentsToReturn, selectedMonth);
+    }
+    return paymentsToReturn;
   }
+
+  function returnPaymentsFromDentist() {
+    let paymentsToReturn: Payment[] = [];
+    if (payments.length === 0) return paymentsToReturn;
+    if (selectedDentist.id === "0") {
+      paymentsToReturn = payments;
+    } else {
+      paymentsToReturn = payments.filter(
+        (payment) => payment.userId == selectedDentist.id
+      );
+    }
+    return paymentsToReturn;
+  }
+
+  function getUniqueMonths(payments: Payment[]) {
+    const uniqueMonths = new Set<string>();
+
+    payments.forEach((payment) => {
+      const month = new Date(payment.createdAt).toLocaleString("pt-BR", {
+        month: "long",
+        year: "numeric",
+      });
+      uniqueMonths.add(month);
+    });
+
+    return Array.from(uniqueMonths);
+  }
+
+  function getPaymentsForMonth(payments: Payment[], selectedMonth: string) {
+    return payments.filter((payment) => {
+      const month = new Date(payment.createdAt).toLocaleString("pt-BR", {
+        month: "long",
+        year: "numeric",
+      });
+      return month === selectedMonth;
+    });
+  }
+
+  function getValues() {
+    const paymentsSelected = returnPayments();
+    const totalRecipe = paymentsSelected.reduce(
+      (sum, payment) => sum + payment.value,
+      0
+    );
+    const totalCost = paymentsSelected.reduce(
+      (sum, payment) => sum + payment.cost,
+      0
+    );
+
+    return { totalRecipe, totalCost };
+  }
+
+  const { totalRecipe, totalCost } = getValues();
 
   return (
     <>
       <div className="d-flex gap-2 full mb-2">
         {dentistas.map((dentista) => (
           <Button
+            key={dentista.id}
             onClick={() => {
               setSelectedDentist(dentista);
             }}
+            variant={selectedDentist.id === dentista.id ? "warning" : undefined}
           >
             {dentista.name}
           </Button>
@@ -83,6 +150,45 @@ export default function Home() {
           Adicionar Pagamento
         </Button>
       </div>
+      <div className="d-flex gap-2 full mb-2">
+        {getUniqueMonths(returnPaymentsFromDentist()).map((month, index) => (
+          <Button
+            key={index}
+            variant={selectedMonth === month ? "warning" : undefined}
+            onClick={() => setSelectedMonth(month)}
+          >
+            {month}
+          </Button>
+        ))}
+        <Button
+          onClick={() => {
+            setSelectedMonth(null);
+          }}
+          variant={selectedMonth === null ? "warning" : undefined}
+        >
+          Todos
+        </Button>
+      </div>
+      <div className="d-flex gap-2 full mb-2">
+        <div className="ms-auto p-3 bg-dark rounded shadow-sm">
+          <div className="fw-bold fs-5 text-success">
+            Receita total: {formatCurrency(totalRecipe)}
+          </div>
+          <div className="fw-bold fs-5 text-danger">
+            Custo (Protético): {formatCurrency(totalCost)}
+          </div>
+          <div className="fw-bold fs-5 text-primary">
+            Subtotal: {formatCurrency(totalRecipe - totalCost)}
+          </div>
+          <div className="fw-bold fs-5 text-info">
+            Dentista: {formatCurrency((totalRecipe - totalCost) * 0.6)}
+          </div>
+          <div className="fw-bold fs-5 text-warning">
+            Clínica: {formatCurrency((totalRecipe - totalCost) * 0.4)}
+          </div>
+        </div>
+      </div>
+
       <div className="d-flex gap-4">
         <PaymentTable
           payments={returnPayments()}
@@ -212,57 +318,71 @@ function PaymentTable({
       <Table striped bordered hover className="" responsive>
         <thead>
           <tr>
-            {dentist.id !== "0" && <th>Dentista</th>}
-            <th>Data</th>
-            <th>Nome do Paciente</th>
-            <th>Especialidade</th>
-            <th>Procedimento</th>
-            <th>Forma de Pagamento</th>
-            <th>Valor</th>
-            <th>Custo (Protético)</th>
-            <th>Subtotal</th>
-            <th>60%</th>
-            <th>40%</th>
-            <th>Status</th>
-            <th>Observação / Procedimentos de Particular</th>
-            <th>Opções</th>
+            {dentist.id !== "0" && <th className="text-warning">Dentista</th>}
+            <th className="text-warning">Data</th>
+            <th className="text-warning">Nome do Paciente</th>
+            <th className="text-warning">Especialidade</th>
+            <th className="text-warning">Procedimento</th>
+            <th className="text-warning">Forma de Pagamento</th>
+            <th className="text-warning">Valor</th>
+            <th className="text-warning">Custo (Protético)</th>
+            <th className="text-warning">Subtotal</th>
+            <th className="text-warning">60%</th>
+            <th className="text-warning">40%</th>
+            <th className="text-warning">Status</th>
+            <th className="text-warning">
+              Observação / Procedimentos de Particular
+            </th>
+            <th className="text-warning">Opções</th>
           </tr>
         </thead>
         <tbody>
           {payments.map((payment, index) => (
             <tr key={index}>
-              {dentist.id !== "0" && <th>{dentist.name}</th>}
-              <td>{formatDate(payment.createdAt.toString())}</td>
-              <td>{capitalizeFirstLetter(payment.pacientName)}</td>
-              <td>
+              {dentist.id !== "0" && (
+                <td className="text-info">{dentist.name}</td>
+              )}
+              <td className="text-primary">
+                {formatDate(payment.createdAt.toString())}
+              </td>
+              <td className="text-primary">
+                {capitalizeFirstLetter(payment.pacientName)}
+              </td>
+              <td className="text-primary">
                 {
                   UsersApi.Especialidade[
                     payment.expertise as keyof typeof UsersApi.Especialidade
                   ]
                 }
               </td>
-              <td>{payment.procedure}</td>
-              <td>
+              <td className="text-primary">{payment.procedure}</td>
+              <td className="text-primary">
                 {
                   UsersApi.Pagamento[
                     payment.paymentMethod as keyof typeof UsersApi.Pagamento
                   ]
                 }
               </td>
-              <td>{payment.value}</td>
-              <td>{payment.cost}</td>
-              <td>{payment.value}</td>
-              <td>{payment.value * 0.6}</td>
-              <td>{payment.value * 0.4}</td>
-              <td>
+              <td className="text-primary">{formatCurrency(payment.value)}</td>
+              <td className="text-primary">{formatCurrency(payment.cost)}</td>
+              <td className="text-primary">
+                {formatCurrency(payment.value - payment.cost)}
+              </td>
+              <td className="text-primary">
+                {formatCurrency((payment.value - payment.cost) * 0.6)}
+              </td>
+              <td className="text-primary">
+                {formatCurrency((payment.value - payment.cost) * 0.4)}
+              </td>
+              <td className="text-primary">
                 {
                   UsersApi.Status[
                     payment.status as keyof typeof UsersApi.Status
                   ]
                 }
               </td>
-              <td>{payment.observations}</td>
-              <td>
+              <td className="text-primary">{payment.observations}</td>
+              <td className="text-primary">
                 <div className="d-flex gap-2">
                   <Button onClick={() => setPaymentToEdit(payment)}>
                     Editar
@@ -271,6 +391,7 @@ function PaymentTable({
                     onClick={() => {
                       remove(payment.id);
                     }}
+                    variant="danger"
                   >
                     Excluir
                   </Button>

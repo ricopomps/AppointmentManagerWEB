@@ -10,8 +10,8 @@ import "./globals.scss";
 import "./utils.css";
 
 export const metadata: Metadata = {
-  title: "Blog",
-  description: "A full-stack NextJS course by Coding in Flow",
+  title: "Clínica Pompilio",
+  description: "Clínica Pompilio",
   twitter: {
     card: "summary_large_image",
   },

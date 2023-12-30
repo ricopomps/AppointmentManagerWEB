@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext } from "react";
-import { Button, Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 import { FiEdit } from "react-icons/fi";
 import { AuthModalsContext } from "../AuthModalsProvider";
 import styles from "./NavBar.module.css";
@@ -29,16 +29,13 @@ export default function NavBar() {
           className="d-flex align-items-center gap-1"
         >
           <Image src={logo} alt="logo" width={70} height={70} />
-          <span className={styles.brandText}>Blog</span>
+          <span className={styles.brandText}>Clínica Pompilio</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
           <Nav>
             <Nav.Link as={Link} active={pathname === "/"} href="/">
               Home
-            </Nav.Link>
-            <Nav.Link as={Link} active={pathname === "/blog"} href="/blog">
-              Articles
             </Nav.Link>
           </Nav>
           {user ? <LoggedInView user={user} /> : <LoggedOutView />}
@@ -100,7 +97,7 @@ function LoggedOutView() {
   const { showLoginModal, showSignUpModal } = useContext(AuthModalsContext);
   return (
     <Nav className="ms-auto">
-      <Button
+      {/* <Button
         variant="outline-primary"
         onClick={showLoginModal}
         className="ms-md-2 mt-2 mt-md-0"
@@ -110,7 +107,7 @@ function LoggedOutView() {
 
       <Button onClick={showSignUpModal} className="ms-md-2 mt-2 mt-md-0">
         Sign Up
-      </Button>
+      </Button> */}
     </Nav>
   );
 }

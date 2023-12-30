@@ -16,6 +16,16 @@ export function formatRelativeDate(dateString: string) {
   });
 }
 
+export function formatCurrency(number: number) {
+  const formattedNumber = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+  }).format(number);
+
+  return formattedNumber;
+}
+
 export function generateSlug(input: string) {
   return input
     .replace(/[^a-zA-Z0-9 ]/g, "")

@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <Container>
-        <p>© {new Date().getFullYear()} Coding in Flow</p>
+        <p>© {new Date().getFullYear()} Clínica Pompilio</p>
         <ul>
           <li>
             <Link href="/privacy">Privacy</Link>

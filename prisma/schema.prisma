@@ -84,6 +84,11 @@ enum PaymentStatus {
 }
 
 enum Expertise {
-    GENERAL     @map("Geral")
-    SPECIALIZED @map("Especializado")
+    ORTHODONTICS @map("Ortodontia")
+    ENDODONTICS  @map("Endodontia")
+    DENTISTRY    @map("Dentistica")
+    PERIODONTICS @map("Periodontia")
+    GENERAL      @map("Geral")
+    SPECIALIZED  @map("Especializado")
+    OTHER        @map("Outro")
 }

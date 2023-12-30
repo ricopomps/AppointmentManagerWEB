@@ -3,7 +3,7 @@ import { UnauthorizedError } from "@/network/http-errors";
 import { handleError } from "@/utils/utils";
 import { requiredStringSchema } from "@/utils/validation";
 import { Payment } from "@prisma/client";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 import { Alert, Form, Modal } from "react-bootstrap";
@@ -24,37 +24,54 @@ interface PaymentCreateEditModalProps {
   updateEdit: (payment: Payment) => void;
   paymentToEdit?: Payment;
 }
-
+type PaymentFormData = Omit<Payment, "createdAt"> & {
+  createdAt: string;
+};
 export default function PaymentCreateEditModal({
   onDismiss,
   paymentToEdit,
   updateEdit,
 }: PaymentCreateEditModalProps) {
+  console.log(paymentToEdit);
   const [errorText, setErrorText] = useState<string | null>(null);
-
+  const guy = format(new Date(), "yyyy-MM-dd");
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<Payment>({
+  } = useForm<PaymentFormData>({
     defaultValues: {
       cost: 0,
       ...paymentToEdit,
+      createdAt: paymentToEdit?.createdAt
+        ? format(
+            parse(
+              paymentToEdit.createdAt.toString(),
+              "yyyy-MM-dd'T'HH:mm:ss.SSSX",
+              new Date()
+            ),
+            "yyyy-MM-dd"
+          )
+        : format(new Date(), "yyyy-MM-dd"),
     },
   });
 
-  async function onSubmit(formData: Payment) {
+  async function onSubmit(formData: PaymentFormData) {
     try {
       console.log(formData);
       if (paymentToEdit) {
-        const payment = await UsersApi.updatePayment(
-          paymentToEdit.id,
-          formData
-        );
+        const payment = await UsersApi.updatePayment(paymentToEdit.id, {
+          ...formData,
+          createdAt: parse(formData.createdAt, "yyyy-MM-dd", new Date()),
+        });
         console.log("payment", payment);
         updateEdit(payment);
       } else {
-        const payment = await UsersApi.createPayment(formData);
+        const payment = await UsersApi.createPayment({
+          ...formData,
+          createdAt: parse(formData.createdAt, "yyyy-MM-dd", new Date()),
+        });
         updateEdit(payment);
       }
       toast.success(
@@ -140,7 +157,7 @@ export default function PaymentCreateEditModal({
               required: "Campo obrigatório",
             })}
             as="select"
-            hasDefaultValue={true}
+            hasDefaultValue
             options={paymentMethodOptions}
             label="Forma de Pagamento"
             placeholder="Forma de Pagamento"
