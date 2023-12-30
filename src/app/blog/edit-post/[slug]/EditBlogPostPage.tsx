@@ -118,7 +118,8 @@ export default function EditBlogPostPage({ post }: EditBlogPostPageProps) {
     }
   }
 
-  const userIsAuthorized = (user && user._id === post.author._id) || false;
+  const userIsAuthorized = false;
+  //   const userIsAuthorized = (user && user._id === post.author._id) || false;
 
   if (!userLoading && !userIsAuthorized) {
     return <p>You are not authorized to edit this post</p>;
