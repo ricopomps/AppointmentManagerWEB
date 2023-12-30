@@ -1,14 +1,15 @@
 "use client";
 
-import logo from "@/assets/images/logo.png";
 import ProfileImage from "@/components/ProfileImage";
+import PaymentCreateEditModal from "@/components/modal/PaymentCreateEditModal";
 import { User } from "@/models/user";
 import * as UsersApi from "@/network/api/user";
 import { generateIntervals } from "@/utils/prepareIntervals";
-import { capitalizeFirstLetter } from "@/utils/utils";
-import Image from "next/image";
+import { capitalizeFirstLetter, formatDate } from "@/utils/utils";
+import { Payment } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { Button, Col, Nav, Row } from "react-bootstrap";
+import { Button, Col, Tab, Table } from "react-bootstrap";
+import { toast } from "react-toastify";
 import styles from "./Home.module.css";
 export interface Interval {
   interval: string;
@@ -26,47 +27,110 @@ interface DentistSchedulesInterface {
   }[];
 }
 
+export enum Pagamento {
+  CASH = "Dinheiro",
+  CREDIT_CARD = "Cartão de crédito",
+  DEBIT_CARD = "Cartão de débito",
+  PIX = "Pix",
+}
+export enum Status {
+  PENDING = "Pendente",
+  COMPLETED = "Completo",
+  CANCELED = "Cancelado",
+}
+
+export enum Especialidade {
+  GENERAL = "Geral",
+  SPECIALIZED = "Especializado",
+}
+
 export default function Home() {
-  const week = Array.from({ length: 7 }, (_, index) => {
-    const dayValue = new Date(); // Initialize with the current date
-    dayValue.setDate(dayValue.getDate() + index); // Increment the date for each day
-
-    // Define the Portuguese day names
-    const dayNames = [
-      "segunda-feira",
-      "terça-feira",
-      "quarta-feira",
-      "quinta-feira",
-      "sexta-feira",
-      "sábado",
-      "domingo",
-    ];
-
-    return {
-      dayNumber: index + 1, // Adding 1 to make it 1-based
-      dayName: dayNames[index],
-      dayValue: dayValue,
-    };
+  const [selectedDentist, setSelectedDentist] = useState({
+    name: "Todos",
+    id: "0",
   });
+  const [open, setOpen] = useState(false);
+  const [paymentToEdit, setPaymentToEdit] = useState<Payment | undefined>(
+    undefined
+  );
+  const [payments, setPayments] = useState<Payment[]>([]);
 
-  //put consultorio name and day on query params
+  useEffect(() => {
+    const getData = async () => {
+      const payments = await UsersApi.getPayments();
+      setPayments(payments);
+    };
+    getData();
+  }, []);
+  const dentistas = [
+    { name: "Renata", id: "64ab18249dff233e74f2be51" },
+    { name: "Natália", id: "648a454d532dcd711b38d4ee" },
+    { name: "Júlia", id: "64ab23662cdbdb203b94421f" },
+    { name: "Todos", id: "0" },
+  ];
+
+  function returnPayments() {
+    if (payments.length === 0) return [];
+    if (selectedDentist.id === "0") {
+      return payments;
+    } else {
+      return payments.filter((payment) => payment.userId == selectedDentist.id);
+    }
+  }
 
   return (
-    <div className="d-flex gap-4">
-      <ClinicView />
-      <div>
-        <Nav variant="tabs" defaultActiveKey={1}>
-          {week.map((day) => (
-            <Nav.Item key={day.dayValue.toString()}>
-              <Nav.Link eventKey={day.dayNumber}>
-                {capitalizeFirstLetter(day.dayName)}
-              </Nav.Link>
-            </Nav.Item>
-          ))}
-        </Nav>
-        <DentistSchedules />
+    <>
+      <div className="d-flex gap-2 full mb-2">
+        {dentistas.map((dentista) => (
+          <Button
+            onClick={() => {
+              setSelectedDentist(dentista);
+            }}
+          >
+            {dentista.name}
+          </Button>
+        ))}
+        <Button
+          className="ms-auto"
+          onClick={() => {
+            setPaymentToEdit(undefined);
+            setOpen(true);
+          }}
+        >
+          Adicionar Pagamento
+        </Button>
       </div>
-    </div>
+      <div className="d-flex gap-4">
+        <PaymentTable
+          payments={returnPayments()}
+          dentist={selectedDentist}
+          setPaymentToEdit={(payment: Payment) => {
+            setPaymentToEdit(payment);
+          }}
+          removePayment={(paymentId: string) => {
+            setPayments(payments.filter((pay) => pay.id !== paymentId));
+          }}
+        />
+      </div>
+      {(open || paymentToEdit) && (
+        <PaymentCreateEditModal
+          onDismiss={() => {
+            setPaymentToEdit(undefined);
+            setOpen(false);
+          }}
+          updateEdit={(payment: Payment) => {
+            if (payments.find((pay) => pay.id === payment.id)) {
+              setPayments(
+                payments.map((pay) => (pay.id === payment.id ? payment : pay))
+              );
+            } else {
+              setPayments([...payments, payment]);
+            }
+          }}
+          paymentToEdit={paymentToEdit}
+        />
+      )}
+    </>
   );
 }
 
@@ -139,61 +203,86 @@ async function DentistSchedules() {
   );
 }
 
-function ClinicView() {
-  const [selectedClinic, setSelectedClinic] = useState({
-    name: "Abreu e lima",
-    address: "Na praça de abreu",
-  });
-  const consultorios = [
-    { name: "Abreu e lima", address: "Na praça de abreu" },
-    { name: "Igarassu", address: "No lado do mercado de Igarassu" },
-    { name: "Consultório novo", address: "Sala 1605" },
-  ];
+interface PaymentTableProps {
+  payments: any[];
+  dentist: { name: string; id: string };
+  setPaymentToEdit: (payment: Payment) => void;
+  removePayment: (paymentId: string) => void;
+}
+
+function PaymentTable({
+  payments,
+  dentist,
+  setPaymentToEdit,
+  removePayment,
+}: PaymentTableProps) {
+  async function remove(paymentId: string) {
+    try {
+      await UsersApi.deletePayment(paymentId);
+      removePayment(paymentId);
+    } catch (error) {
+      toast.error("Error");
+    }
+  }
   return (
-    <div className={`p-4 ${styles.border}`}>
-      <Nav variant="tabs" defaultActiveKey={1}>
-        {consultorios.map((consultorio) => (
-          <Nav.Item key={consultorio.name}>
-            <Nav.Link
-              eventKey={consultorio.name}
-              onClick={() => setSelectedClinic(consultorio)}
-            >
-              {capitalizeFirstLetter(consultorio.name)}
-            </Nav.Link>
-          </Nav.Item>
-        ))}
-      </Nav>
-      <>
-        {selectedClinic && (
-          <Row>
-            <Col sm="auto">
-              <Image
-                src={logo}
-                width={200}
-                height={200}
-                alt={`Profile pic user: ${"username"}`}
-                priority
-                className={`rounded ${styles.profilePic}`}
-              />
-            </Col>
-            <Col className="mt-2 mt-sm-0">
-              <h1>{selectedClinic.name}</h1>
-              <div>
-                <strong>Nome: </strong>
-                {selectedClinic.name}
-              </div>
-              <div>
-                <strong>Endereço: </strong>
-                {selectedClinic.address}
-              </div>
-              <div className="pre-line">
-                <strong>About me: </strong> <br />
-                {"about" || "This user hasn't shared any info yet"}
-              </div>
-            </Col>
-          </Row>
-        )}
-      </>
-    </div>
+    <Tab.Content className="">
+      <Table striped bordered hover className="" responsive>
+        <thead>
+          <tr>
+            {dentist.id !== "0" && <th>Dentista</th>}
+            <th>Data</th>
+            <th>Nome do Paciente</th>
+            <th>Especialidade</th>
+            <th>Procedimento</th>
+            <th>Forma de Pagamento</th>
+            <th>Valor</th>
+            <th>Custo (Protético)</th>
+            <th>Subtotal</th>
+            <th>60%</th>
+            <th>40%</th>
+            <th>Status</th>
+            <th>Observação / Procedimentos de Particular</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          {payments.map((payment, index) => (
+            <tr key={index}>
+              {dentist.id !== "0" && <th>{dentist.name}</th>}
+              <td>{formatDate(payment.createdAt.toString())}</td>
+              <td>{capitalizeFirstLetter(payment.pacientName)}</td>
+              <td>
+                {Especialidade[payment.expertise as keyof typeof Especialidade]}
+              </td>
+              <td>{payment.procedure}</td>
+              <td>
+                {Pagamento[payment.paymentMethod as keyof typeof Pagamento]}
+              </td>
+              <td>{payment.value}</td>
+              <td>{payment.cost}</td>
+              <td>{payment.value}</td>
+              <td>{payment.value * 0.6}</td>
+              <td>{payment.value * 0.4}</td>
+              <td>{Status[payment.status as keyof typeof Status]}</td>
+              <td>{payment.observations}</td>
+              <td>
+                <div className="d-flex gap-2">
+                  <Button onClick={() => setPaymentToEdit(payment)}>
+                    Editar
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      remove(payment.id);
+                    }}
+                  >
+                    Excluir
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Tab.Content>
   );
 }

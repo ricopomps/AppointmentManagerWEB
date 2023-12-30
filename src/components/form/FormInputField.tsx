@@ -1,38 +1,79 @@
-import { ComponentProps } from "react";
-import { Form, FormControlProps, InputGroup } from "react-bootstrap";
-import { FieldError, UseFormRegisterReturn } from "react-hook-form";
+import { Form } from "react-bootstrap";
+import {
+  FieldError,
+  RegisterOptions,
+  UseFormRegisterReturn,
+} from "react-hook-form";
 
-interface FormInputFieldProps {
-  register: UseFormRegisterReturn;
+export interface Option {
+  value: string | number;
+  key: string | number;
+  disabled?: boolean;
+  show?: boolean;
+}
+interface TextInputFieldProps {
   label?: string;
+  register: UseFormRegisterReturn;
+  registerOptions?: RegisterOptions;
   error?: FieldError;
-  inputGroupElement?: JSX.Element;
+  options?: Option[];
+  hasDefaultValue?: boolean;
+  margin?: boolean;
+  nullable?: boolean;
+  [x: string]: any;
 }
 
-export default function FormInputField({
-  register,
+const TextInputField = ({
   label,
+  placeholder,
+  register,
+  registerOptions,
   error,
-  inputGroupElement,
+  hasDefaultValue,
+  options,
+  margin = true,
+  nullable = false,
   ...props
-}: FormInputFieldProps & FormControlProps & ComponentProps<"input">) {
+}: TextInputFieldProps) => {
   return (
-    <Form.Group className="mb-3" controlId={`${register.name}-input`}>
+    <Form.Group className={margin ? "mb-3" : undefined}>
       {label && <Form.Label>{label}</Form.Label>}
-      <InputGroup>
-        <Form.Control
-          {...register}
-          {...props}
-          isInvalid={!!error}
-          aria-describedby={inputGroupElement?.props.id}
-        />
-        {inputGroupElement}
-        {error && (
-          <Form.Control.Feedback type="invalid">
-            {error.message}
-          </Form.Control.Feedback>
-        )}
-      </InputGroup>
+      <Form.Control
+        {...register}
+        {...props}
+        placeholder={placeholder}
+        isInvalid={!!error}
+      >
+        {options ? (
+          <>
+            {hasDefaultValue && (
+              <option value={undefined} disabled={!nullable} selected>
+                {placeholder}
+              </option>
+            )}
+            {options.map((option) => (
+              <>
+                {option.show ? (
+                  <></>
+                ) : (
+                  <option
+                    key={option.key}
+                    value={option.value}
+                    disabled={option.disabled}
+                  >
+                    {option.key}
+                  </option>
+                )}
+              </>
+            ))}
+          </>
+        ) : null}
+      </Form.Control>
+      <Form.Control.Feedback type="invalid">
+        {error?.message}
+      </Form.Control.Feedback>
     </Form.Group>
   );
-}
+};
+
+export default TextInputField;

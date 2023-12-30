@@ -1,6 +1,7 @@
 import { User } from "@/models/user";
-import api from "@/network/axiosInstance";
+import api, { secondaryAxiosInstace } from "@/network/axiosInstance";
 import { generateFormData } from "@/utils/utils";
+import { Payment } from "@prisma/client";
 
 const baseUrl = "/users";
 
@@ -86,4 +87,36 @@ export async function findDentistsByClinic(clinicId: string) {
   const response = await api.get<User[]>(`${baseUrl}/dentists/${clinicId}`);
 
   return response.data;
+}
+
+export async function createPayment(formData: Payment) {
+  const response = await secondaryAxiosInstace.post<{ payment: Payment }>(
+    `api/payment`,
+    formData
+  );
+
+  return response.data.payment;
+}
+
+export async function getPayments() {
+  const response = await secondaryAxiosInstace.get<Payment[]>(`api/payment`);
+  return response.data;
+}
+
+export async function updatePayment(paymentId: string, formData: Payment) {
+  const response = await secondaryAxiosInstace.patch<{ payment: Payment }>(
+    `api/payment`,
+    {
+      ...formData,
+      id: paymentId,
+    }
+  );
+  return response.data.payment;
+}
+
+export async function deletePayment(paymentId: string) {
+  const response = await secondaryAxiosInstace.delete<{ payment: Payment }>(
+    `api/payment/${paymentId}`
+  );
+  return response.data.payment;
 }

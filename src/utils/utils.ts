@@ -6,7 +6,7 @@ import ptBR from "date-fns/locale/pt-BR";
 import { toast } from "react-toastify";
 
 export function formatDate(dateString: string) {
-  return format(new Date(dateString), "MMM d, yyyy", { locale: ptBR });
+  return format(new Date(dateString), "dd/MM/yyyy", { locale: ptBR });
 }
 
 export function formatRelativeDate(dateString: string) {
