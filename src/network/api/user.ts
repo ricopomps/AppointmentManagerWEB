@@ -10,6 +10,23 @@ export async function getAuthenticatedUser() {
   return response.data;
 }
 
+export enum Pagamento {
+  CASH = "Dinheiro",
+  CREDIT_CARD = "Cartão de crédito",
+  DEBIT_CARD = "Cartão de débito",
+  PIX = "Pix",
+}
+export enum Status {
+  PENDING = "Pendente",
+  COMPLETED = "Completo",
+  CANCELED = "Cancelado",
+}
+
+export enum Especialidade {
+  GENERAL = "Geral",
+  SPECIALIZED = "Especializado",
+}
+
 interface SignUpValues {
   username: string;
   email: string;

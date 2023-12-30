@@ -1,4 +1,3 @@
-import { Especialidade, Pagamento, Status } from "@/app/page";
 import * as UsersApi from "@/network/api/user";
 import { UnauthorizedError } from "@/network/http-errors";
 import { handleError } from "@/utils/utils";
@@ -72,18 +71,20 @@ export default function PaymentCreateEditModal({
       }
     }
   }
-  const ExpertiseOptions = Object.keys(Especialidade).map((key) => ({
-    key: Especialidade[key as keyof typeof Especialidade].toString(),
+  const ExpertiseOptions = Object.keys(UsersApi.Especialidade).map((key) => ({
+    key: UsersApi.Especialidade[
+      key as keyof typeof UsersApi.Especialidade
+    ].toString(),
     value: key,
   }));
 
-  const paymentMethodOptions = Object.keys(Pagamento).map((key) => ({
-    key: Pagamento[key as keyof typeof Pagamento].toString(),
+  const paymentMethodOptions = Object.keys(UsersApi.Pagamento).map((key) => ({
+    key: UsersApi.Pagamento[key as keyof typeof UsersApi.Pagamento].toString(),
     value: key,
   }));
 
-  const statusOptions = Object.keys(Status).map((key) => ({
-    key: Status[key as keyof typeof Status].toString(),
+  const statusOptions = Object.keys(UsersApi.Status).map((key) => ({
+    key: UsersApi.Status[key as keyof typeof UsersApi.Status].toString(),
     value: key,
   }));
 

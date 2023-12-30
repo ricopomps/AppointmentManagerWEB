@@ -27,23 +27,6 @@ interface DentistSchedulesInterface {
   }[];
 }
 
-export enum Pagamento {
-  CASH = "Dinheiro",
-  CREDIT_CARD = "Cartão de crédito",
-  DEBIT_CARD = "Cartão de débito",
-  PIX = "Pix",
-}
-export enum Status {
-  PENDING = "Pendente",
-  COMPLETED = "Completo",
-  CANCELED = "Cancelado",
-}
-
-export enum Especialidade {
-  GENERAL = "Geral",
-  SPECIALIZED = "Especializado",
-}
-
 export default function Home() {
   const [selectedDentist, setSelectedDentist] = useState({
     name: "Todos",
@@ -252,18 +235,32 @@ function PaymentTable({
               <td>{formatDate(payment.createdAt.toString())}</td>
               <td>{capitalizeFirstLetter(payment.pacientName)}</td>
               <td>
-                {Especialidade[payment.expertise as keyof typeof Especialidade]}
+                {
+                  UsersApi.Especialidade[
+                    payment.expertise as keyof typeof UsersApi.Especialidade
+                  ]
+                }
               </td>
               <td>{payment.procedure}</td>
               <td>
-                {Pagamento[payment.paymentMethod as keyof typeof Pagamento]}
+                {
+                  UsersApi.Pagamento[
+                    payment.paymentMethod as keyof typeof UsersApi.Pagamento
+                  ]
+                }
               </td>
               <td>{payment.value}</td>
               <td>{payment.cost}</td>
               <td>{payment.value}</td>
               <td>{payment.value * 0.6}</td>
               <td>{payment.value * 0.4}</td>
-              <td>{Status[payment.status as keyof typeof Status]}</td>
+              <td>
+                {
+                  UsersApi.Status[
+                    payment.status as keyof typeof UsersApi.Status
+                  ]
+                }
+              </td>
               <td>{payment.observations}</td>
               <td>
                 <div className="d-flex gap-2">
