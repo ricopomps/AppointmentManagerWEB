@@ -111,7 +111,8 @@ function CommentLayout({
 }: CommentLayoutProps) {
   const { user } = useAuthenticatedUser();
 
-  const loggedInUserIsAuthor = (user && user._id === author._id) || false;
+  const loggedInUserIsAuthor = false;
+  //   const loggedInUserIsAuthor = (user && user._id === author._id) || false;
 
   return (
     <div>

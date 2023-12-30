@@ -44,10 +44,10 @@ export default function OnboardingPage() {
   }
 
   useEffect(() => {
-    if (user?.username) {
-      const returnTo = decodeURIComponent(searchParams?.get("returnTo") || "");
-      router.push(returnTo || "/");
-    }
+    // if (user?.username) {
+    //   const returnTo = decodeURIComponent(searchParams?.get("returnTo") || "");
+    //   router.push(returnTo || "/");
+    // }
   }, [user, router, searchParams]);
 
   return (

@@ -11,12 +11,12 @@ export default function OnBoardingRedirect() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (user && !user.username && pathname !== "/onboarding")
-      router.push(
-        `/onboarding?returnTo=${encodeURIComponent(
-          pathname + (searchParams?.size ? "?" + searchParams : "")
-        )}`
-      );
+    // if (user && !user.username && pathname !== "/onboarding")
+    //   router.push(
+    //     `/onboarding?returnTo=${encodeURIComponent(
+    //       pathname + (searchParams?.size ? "?" + searchParams : "")
+    //     )}`
+    //   );
   }, [user, router, pathname, searchParams]);
 
   return null;

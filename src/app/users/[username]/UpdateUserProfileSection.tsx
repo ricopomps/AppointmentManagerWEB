@@ -62,10 +62,11 @@ export default function UpdateUserProfileSection({
     }
   }
 
-  const profileUserIsLoggedInUser =
-    (loggedInUser && loggedInUser._id === profileUser._id) || false;
+  return null;
+  //   const profileUserIsLoggedInUser =
+  //     (loggedInUser && loggedInUser._id === profileUser._id) || false;
 
-  if (!profileUserIsLoggedInUser) return null;
+  //   if (!profileUserIsLoggedInUser) return null;
 
   return (
     <div>
