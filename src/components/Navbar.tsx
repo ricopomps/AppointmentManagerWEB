@@ -32,7 +32,7 @@ export default function Navbar() {
           >
             <ul>
               <li>
-                <Link href={"/"}>
+                <Link href={"/users?clinicId=65bd15608adee8f2767be152"}>
                   <Users />
                   <p>Gerenciamento de usuários</p>
                 </Link>
