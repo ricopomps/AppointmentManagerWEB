@@ -5,6 +5,7 @@ import { Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import ClerkUserButton from "./ClerkUserButton";
+import ClinicSelector from "./ClinicSelector";
 
 export default function Navbar() {
   function toggleDrawer() {
@@ -25,17 +26,27 @@ export default function Navbar() {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul
-            className="menu min-h-full w-80 bg-secondary p-4 text-base-content"
+          <div
+            className="menu flex min-h-full w-80 justify-between bg-secondary p-4 text-base-content"
             onClick={toggleDrawer}
           >
-            <li>
-              <Link href={"/"}>
-                <Users />
-                <p>Gerenciamento de usuários</p>
-              </Link>
-            </li>
-          </ul>
+            <ul>
+              <li>
+                <Link href={"/"}>
+                  <Users />
+                  <p>Gerenciamento de usuários</p>
+                </Link>
+              </li>
+            </ul>
+            <div
+              className="mt-4"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <ClinicSelector />
+            </div>
+          </div>
         </div>
       </div>
     </div>
