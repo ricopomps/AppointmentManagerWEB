@@ -4,6 +4,7 @@ import logo from "@/assets/logo.png";
 import { Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import ClerkUserButton from "./ClerkUserButton";
 
 export default function Navbar() {
   function toggleDrawer() {
@@ -62,7 +63,7 @@ function TopBar() {
             </svg>
           </label>
         </div>
-        <div className="flex-1">
+        <div className="flex w-full items-center justify-between pr-0 md:pr-6">
           <Link
             href={"/"}
             className="btn btn-ghost btn-lg ml-0 flex items-center justify-between pl-0 text-xl md:pl-4"
@@ -70,6 +71,9 @@ function TopBar() {
             <Image src={logo} alt="logo" width={50} height={50} />
             <p>Clínica</p>
           </Link>
+          <div className="flex items-center">
+            <ClerkUserButton />
+          </div>
         </div>
       </div>
     </div>
