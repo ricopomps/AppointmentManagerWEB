@@ -1,36 +1,24 @@
 "use client";
-import { getClinic } from "@/network/api/clinic";
+import { UserContext } from "@/context/UserProvider";
 import { useUser } from "@clerk/nextjs";
-import { Clinic } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 
-interface ClinicPageProps {
-  searchParams: { clinicId: string };
-}
+export default function ClinicPage() {
+  const { clinic: selectedClinic } = useContext(UserContext);
 
-export default function ClinicPage({
-  searchParams: { clinicId },
-}: ClinicPageProps) {
   const { user } = useUser();
-  const [clinic, setClinic] = useState<Clinic>();
-  useEffect(() => {
-    const fetchData = async () => {
-      const clinic = await getClinic(clinicId);
-      setClinic(clinic);
-    };
-    fetchData();
-  }, [clinicId]);
-  if (!clinic) return <>loading...</>;
+
+  if (!selectedClinic) return <>loading...</>;
 
   return (
-    <div>
-      {JSON.stringify(clinic)}
-      <p>
+    <main className="m-auto min-w-[300px] max-w-7xl p-4">
+      {JSON.stringify(selectedClinic)}
+      <div>
         {user &&
           user.publicMetadata.clinics
-            ?.find((clinic) => clinic.clinicId === clinicId)
+            ?.find((clinic) => clinic.clinicId === selectedClinic.id)
             ?.roles.map((role) => <p key={role}>{role}</p>)}
-      </p>
-    </div>
+      </div>
+    </main>
   );
 }

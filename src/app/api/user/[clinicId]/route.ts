@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { hasRole } from "@/lib/utils";
-import { Roles } from "@/models/roles";
+import { Role } from "@/models/roles";
 import { currentUser } from "@clerk/nextjs";
 import { clerkClient } from "@clerk/nextjs/server";
 
@@ -11,7 +11,7 @@ export async function GET(
   try {
     const user = await currentUser();
 
-    if (!user?.id || !hasRole(user, clinicId, [Roles.creator, Roles.admin])) {
+    if (!user?.id || !hasRole(user, clinicId, [Role.creator, Role.admin])) {
       return Response.json({ error: `Unauthorized` }, { status: 401 });
     }
 

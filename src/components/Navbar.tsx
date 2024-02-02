@@ -1,13 +1,18 @@
 "use client";
 
 import logo from "@/assets/logo.png";
-import { Users } from "lucide-react";
+import { UserContext } from "@/context/UserProvider";
+import { Role } from "@/models/roles";
+import { BarChart4, Church, CircleDollarSign, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useContext } from "react";
 import ClerkUserButton from "./ClerkUserButton";
 import ClinicSelector from "./ClinicSelector";
 
 export default function Navbar() {
+  const { clinic: selectedClinic, hasRole } = useContext(UserContext);
+
   function toggleDrawer() {
     const checkbox = document.getElementById("my-drawer") as HTMLInputElement;
     if (checkbox && checkbox.checked) {
@@ -31,12 +36,36 @@ export default function Navbar() {
             onClick={toggleDrawer}
           >
             <ul>
+              {hasRole([Role.admin, Role.creator]) && (
+                <li>
+                  <Link href={"/users"}>
+                    <Users />
+                    <p>Gerenciamento de usuários</p>
+                  </Link>
+                </li>
+              )}
+              {hasRole([Role.creator]) && (
+                <li>
+                  <Link href={"/clinic"}>
+                    <Church />
+                    <p>Gerenciamento da Clínica</p>
+                  </Link>
+                </li>
+              )}
               <li>
-                <Link href={"/users?clinicId=65bd15608adee8f2767be152"}>
-                  <Users />
-                  <p>Gerenciamento de usuários</p>
+                <Link href={"/payments"}>
+                  <CircleDollarSign />
+                  <p>Pagamentos</p>
                 </Link>
               </li>
+              {hasRole([Role.admin, Role.creator]) && (
+                <li>
+                  <Link href={"/charts"}>
+                    <BarChart4 />
+                    <p>Relatórios</p>
+                  </Link>
+                </li>
+              )}
             </ul>
             <div
               className="mt-4"

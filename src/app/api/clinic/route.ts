@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { createClinicSchema } from "@/lib/validation/clinic";
-import { Roles } from "@/models/roles";
+import { Role } from "@/models/roles";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
@@ -31,12 +31,36 @@ export async function POST(req: Request) {
       publicMetadata: {
         clinics: [
           ...(user.publicMetadata.clinics || []),
-          { clinicId: createdClinic.id, roles: [Roles.creator, Roles.admin] },
+          { clinicId: createdClinic.id, roles: [Role.creator, Role.admin] },
         ],
       },
     });
 
     return Response.json(createdClinic, { status: 201 });
+  } catch (error) {
+    console.error("Error creating Clinic:", error);
+
+    return Response.json({ error: `Error creating Clinic` }, { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const user = await currentUser();
+
+    if (!user?.id) {
+      return Response.json({ error: `Unauthorized` }, { status: 401 });
+    }
+
+    const userClinics = await prisma.clinic.findMany({
+      where: {
+        users: {
+          has: user.id,
+        },
+      },
+    });
+
+    return Response.json(userClinics, { status: 200 });
   } catch (error) {
     console.error("Error creating Clinic:", error);
 

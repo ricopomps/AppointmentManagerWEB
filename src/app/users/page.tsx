@@ -1,24 +1,25 @@
 "use client";
 import Pagination from "@/components/Paginations";
+import { UserContext } from "@/context/UserProvider";
 import { findUsers } from "@/network/api/user";
 import { User } from "@clerk/nextjs/server";
 import { Search, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UserListTable from "./UserListTable";
 
 interface UserPageProps {
   searchParams: {
     name?: string;
     page?: string;
-    clinicId: string;
   };
 }
 
 export default function UsersPage({
-  searchParams: { name, page, clinicId },
+  searchParams: { name, page },
 }: UserPageProps) {
+  const { clinic: selectedClinic } = useContext(UserContext);
   const router = useRouter();
   const pathname = usePathname();
   const [users, setUsers] = useState<User[]>([]);
@@ -51,15 +52,17 @@ export default function UsersPage({
         //   take: usersPerPage,
         //   skip: usersPerPage * (currentPage - 1),
         // });
-        const users = await findUsers(clinicId);
-        setUsers(users);
+        if (selectedClinic) {
+          const users = await findUsers(selectedClinic.id);
+          setUsers(users);
+        }
         // setTotalCount(usersCount);
       } catch (error) {
         console.error(error);
       }
     }
     fetchData();
-  }, [currentPage, name, searchValue, clinicId]);
+  }, [currentPage, name, searchValue, selectedClinic]);
 
   return (
     <main className="m-auto min-w-[300px] max-w-7xl p-4">

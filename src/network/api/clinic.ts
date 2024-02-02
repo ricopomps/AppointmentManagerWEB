@@ -13,3 +13,8 @@ export async function getClinic(clinicId: string) {
   const response = await api.get<Clinic>(`${baseUrl}/${clinicId}`);
   return response.data;
 }
+
+export async function getUserClinics() {
+  const response = await api.get<Clinic[]>(baseUrl);
+  return response.data;
+}
