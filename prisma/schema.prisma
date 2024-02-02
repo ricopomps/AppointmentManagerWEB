@@ -13,8 +13,9 @@ datasource db {
 model Clinic {
     id        String   @id @default(auto()) @map("_id") @db.ObjectId
     name      String
-    createdAt DateTime @db.Date
-    updatedAt DateTime @db.Date
+    users     String[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@map("clinics")
 }
