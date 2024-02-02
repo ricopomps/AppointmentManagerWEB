@@ -1,6 +1,8 @@
 "use client";
 
+import logo from "@/assets/logo.png";
 import { Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Navbar() {
@@ -23,13 +25,13 @@ export default function Navbar() {
             className="drawer-overlay"
           ></label>
           <ul
-            className="menu min-h-full w-80 bg-base-200 p-4 text-base-content"
+            className="menu min-h-full w-80 bg-secondary p-4 text-base-content"
             onClick={toggleDrawer}
           >
             <li>
               <Link href={"/"}>
                 <Users />
-                Gerenciamento de usuários
+                <p>Gerenciamento de usuários</p>
               </Link>
             </li>
           </ul>
@@ -42,7 +44,7 @@ export default function Navbar() {
 function TopBar() {
   return (
     <div className="drawer-content">
-      <div className="navbar bg-base-100">
+      <div className="navbar bg-secondary">
         <div className="flex-none">
           <label htmlFor="my-drawer" className="btn btn-square btn-ghost">
             <svg
@@ -61,8 +63,12 @@ function TopBar() {
           </label>
         </div>
         <div className="flex-1">
-          <Link href={"/"} className="btn btn-ghost text-xl">
-            Clinica
+          <Link
+            href={"/"}
+            className="btn btn-ghost btn-lg ml-0 flex items-center justify-between pl-0 text-xl md:pl-4"
+          >
+            <Image src={logo} alt="logo" width={50} height={50} />
+            <p>Clínica</p>
           </Link>
         </div>
       </div>

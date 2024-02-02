@@ -9,3 +9,51 @@ datasource db {
     provider = "mongodb"
     url      = env("DATABASE_URL")
 }
+
+model Clinic {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    name      String
+    createdAt DateTime @db.Date
+    updatedAt DateTime @db.Date
+
+    @@map("clinics")
+}
+
+model Payment {
+    id            String        @id @default(auto()) @map("_id") @db.ObjectId
+    createdAt     DateTime      @default(now())
+    pacientName   String
+    procedure     String
+    expertise     Expertise
+    paymentMethod PaymentMethod
+    value         Int
+    cost          Int
+    status        PaymentStatus
+    observations  String
+    userId        String        @db.ObjectId
+
+    @@map("payments")
+}
+
+enum PaymentMethod {
+    CASH        @map("dinheiro")
+    CREDIT_CARD @map("Cartão de crédito")
+    DEBIT_CARD  @map("Cartão de débito")
+    PIX         @map("Pix")
+}
+
+enum PaymentStatus {
+    PENDING   @map("Pendente")
+    COMPLETED @map("Completo")
+    CANCELED  @map("Cancelado")
+}
+
+enum Expertise {
+    ORTHODONTICS @map("Ortodontia")
+    ENDODONTICS  @map("Endodontia")
+    DENTISTRY    @map("Dentistica")
+    PERIODONTICS @map("Periodontia")
+    GENERAL      @map("Geral")
+    SPECIALIZED  @map("Especializado")
+    OTHER        @map("Outro")
+}

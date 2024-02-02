@@ -22,14 +22,14 @@ const config: Config = {
       {
         theme: {
           primary: "#DDB076",
-          secondary: "#DDB076",
+          secondary: "#151515",
           accent: "#44515C",
           neutral: "#EBECEA",
           "base-100": "#44515C",
           info: "#DDB076",
           success: "#68A057",
           warning: "#DDB076",
-          error: "#333133",
+          error: "#DEB4A9",
           body: {
             "background-color": "#44515C",
           },
