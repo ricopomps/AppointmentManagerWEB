@@ -24,7 +24,7 @@ interface PaymentListItemProps {
 
 function PaymentListItem({ payment }: PaymentListItemProps) {
   return (
-    <tr>
+    <tr className="hover:bg-white/20">
       <td>{formatDate(payment.paymentDate)}</td>
       <td>{payment.pacientName}</td>
       <td>{Especialidade[payment.expertise]}</td>

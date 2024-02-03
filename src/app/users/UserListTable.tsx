@@ -55,7 +55,7 @@ function UserListItem({
   removeUser,
 }: UserListItemProps) {
   return (
-    <tr>
+    <tr className="hover:bg-white/20">
       <th>
         <label>
           <input type="checkbox" className="checkbox" />
