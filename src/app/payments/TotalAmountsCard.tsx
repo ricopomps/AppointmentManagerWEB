@@ -11,7 +11,7 @@ export default function TotalAmountCard({
 }: TotalAmountCardProps) {
   return (
     <div className="mb-2 flex w-full min-w-[200px] max-w-[400px] justify-end p-4">
-      <div className="w-full rounded-md bg-secondary p-4 text-center text-neutral shadow-md md:w-fit">
+      <div className="isolate aspect-video w-full rounded-xl bg-white/20 p-4 text-center text-neutral shadow-lg ring-1 ring-black/5 md:w-fit">
         <div className="mb-2 font-bold text-success">
           Receita total: {formatMoney(totalRecipe)}
         </div>
