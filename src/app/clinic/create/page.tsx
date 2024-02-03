@@ -43,7 +43,9 @@ export default function CreateClinicPage() {
           <p className="mb-1 text-red-500">{errors.name.message}</p>
         )}
 
-        <LoadingButton loading={isSubmitting}>Criar</LoadingButton>
+        <LoadingButton loading={isSubmitting} className="btn-block">
+          Criar
+        </LoadingButton>
       </form>
     </main>
   );

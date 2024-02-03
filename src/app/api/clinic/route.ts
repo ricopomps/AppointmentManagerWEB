@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       data: { name, users: [user.id] },
     });
 
-    clerkClient.users.updateUser(user.id, {
+    await clerkClient.users.updateUser(user.id, {
       publicMetadata: {
         clinics: [
           ...(user.publicMetadata.clinics || []),

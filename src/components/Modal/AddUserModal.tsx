@@ -1,7 +1,13 @@
 import { UserContext } from "@/context/UserProvider";
-import { AddUserSchema, addUserSchema } from "@/lib/validation/user";
+import { getRoles } from "@/lib/utils";
+import { AddUserFormSchema, addUserFormSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
-import { findUsersNotInClinic } from "@/network/api/user";
+import {
+  addUserToClinic,
+  editUserRoles,
+  findUsersNotInClinic,
+} from "@/network/api/user";
+import { User } from "@clerk/nextjs/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { useContext } from "react";
@@ -10,23 +16,35 @@ import LoadingButton from "../LoadingButton";
 import SelectSearch, { Option } from "../SelectSearch";
 
 interface AddUserModalProps {
+  userToEdit?: User;
   onClose: () => void;
-  onAccept: () => void;
+  onAccept: (user: User) => void;
 }
 
-export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
+export default function AddUserModal({
+  userToEdit,
+  onClose,
+  onAccept,
+}: AddUserModalProps) {
   const { clinic } = useContext(UserContext);
+  const currentRoles =
+    userToEdit && clinic ? getRoles(userToEdit, clinic?.id) : [];
+  const defaultRoles = Object.values(Role).map((role) =>
+    currentRoles.includes(role) ? role : null,
+  );
   const {
-    register,
     handleSubmit,
     control,
-    formState: { errors },
-  } = useForm<AddUserSchema>({
-    resolver: zodResolver(addUserSchema),
-    defaultValues: { roles: [] },
+    formState: { isSubmitting, errors },
+  } = useForm<AddUserFormSchema>({
+    resolver: zodResolver(addUserFormSchema),
+    defaultValues: {
+      userId: userToEdit?.id,
+      roles: defaultRoles,
+    },
   });
 
-  const isValidRole = (value: string | undefined): value is Role => {
+  const isValidRole = (value: string | null): value is Role => {
     return Object.values(Role).includes(value as Role);
   };
 
@@ -45,7 +63,7 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
     }
   };
 
-  const convertToRoleEnum = (input: (string | undefined)[]): Role[] => {
+  const convertToRoleEnum = (input: (string | null)[]): Role[] => {
     const result: Role[] = [];
 
     input.forEach((value) => {
@@ -57,10 +75,26 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
     return result;
   };
 
-  const onSubmit = (data: AddUserSchema) => {
-    const roleArray: Role[] = convertToRoleEnum(data.roles);
-
-    console.log({ ...data, roles: roleArray });
+  const onSubmit = async (data: AddUserFormSchema) => {
+    try {
+      const roleArray: Role[] = convertToRoleEnum(data.roles);
+      if (!clinic) throw new Error("Not logged in a clinic");
+      let updatedUser: User;
+      if (userToEdit) {
+        updatedUser = await editUserRoles({
+          ...data,
+          roles: roleArray,
+          clinicId: clinic.id,
+        });
+      } else {
+        updatedUser = await addUserToClinic({
+          ...data,
+          roles: roleArray,
+          clinicId: clinic.id,
+        });
+      }
+      onAccept(updatedUser);
+    } catch (error) {}
   };
 
   return (
@@ -73,21 +107,29 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
           >
             <X className="h-5 w-5" />
           </button>
-          <h3 className="text-lg font-bold">Adicionar usuário</h3>
+          <h3 className="text-lg font-bold">
+            {userToEdit ? "Editar" : "Adicionar"} usuário
+          </h3>
           <div className="mb-3 flex flex-col-reverse items-center justify-between gap-3 md:flex-row md:items-baseline lg:gap-0">
             <div className="w-full md:w-[50%]">
-              <SelectSearch
-                onFetchOptions={onFetchUsers}
-                control={control}
-                name="userId"
-              />
+              {userToEdit ? (
+                <h1>
+                  {userToEdit.firstName} {userToEdit.lastName}
+                </h1>
+              ) : (
+                <SelectSearch
+                  onFetchOptions={onFetchUsers}
+                  control={control}
+                  name="userId"
+                />
+              )}
             </div>
             <div className="card max-w-96 bg-primary p-1 shadow-xl">
               <div className="max-w-86 card min-w-[280px] bg-neutral text-primary shadow-xl md:min-w-[350px]">
                 <div className="card-body">
                   <h2 className="card-title text-primary">Permissões</h2>
                   {Object.values(Role).map((role, index) => (
-                    <div key={role} className="mb-2 flex items-center">
+                    <div key={index} className="mb-2 flex items-center">
                       <Controller
                         control={control}
                         name={`roles.${index}`}
@@ -99,11 +141,12 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
                                   {...field}
                                   onChange={() => {
                                     if (value === role) {
-                                      onChange(undefined);
+                                      onChange(null);
                                     } else {
                                       onChange(role);
                                     }
                                   }}
+                                  defaultChecked={currentRoles.includes(role)}
                                   type="checkbox"
                                   id={role}
                                   className={"checkbox-primary checkbox"}
@@ -135,7 +178,9 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
             </div>
           </div>
 
-          <LoadingButton loading={false}>Adicionar</LoadingButton>
+          <LoadingButton loading={isSubmitting} className={"btn-block"}>
+            {userToEdit ? "Editar" : "Adicionar"}
+          </LoadingButton>
         </form>
       </div>
       <form method="dialog" className="modal-backdrop">

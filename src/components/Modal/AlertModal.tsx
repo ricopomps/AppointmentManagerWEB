@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
 import { type ClassValue } from "clsx";
 import { X } from "lucide-react";
+import { useState } from "react";
+import LoadingButton from "../LoadingButton";
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -25,6 +27,18 @@ export default function AlertModal({
   onClose,
   onAccept,
 }: AlertModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  function handleAccept() {
+    try {
+      setIsLoading(true);
+      onAccept();
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <dialog className={cn("modal", isOpen && "modal-open")}>
       <div className="modal-box">
@@ -47,12 +61,12 @@ export default function AlertModal({
             >
               {cancelButtonText}
             </button>
-            <button
+            <LoadingButton
+              loading={isLoading}
               className={cn("btn btn-primary", acceptButtonClassName)}
-              onClick={onAccept}
             >
               {acceptButtonText}
-            </button>
+            </LoadingButton>
           </div>
         </div>
       </div>

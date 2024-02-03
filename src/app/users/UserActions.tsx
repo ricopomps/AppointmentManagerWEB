@@ -1,14 +1,17 @@
+import AddUserModal from "@/components/Modal/AddUserModal";
 import AlertModal from "@/components/Modal/AlertModal";
-import { Mail, Trash } from "lucide-react";
+import { User } from "@clerk/nextjs/server";
+import { SquarePen, Trash } from "lucide-react";
 import { useState } from "react";
 
 interface UserActionsProps {
-  userId: string;
+  user: User;
   removeUser: (userId: string) => void;
 }
 
-export default function UserActions({ userId, removeUser }: UserActionsProps) {
+export default function UserActions({ user, removeUser }: UserActionsProps) {
   const [openAlertModal, setOpenAlertModal] = useState(false);
+  const [openEditUserModal, setOpenEditUserModal] = useState(false);
 
   async function deleteUser() {}
 
@@ -23,17 +26,20 @@ export default function UserActions({ userId, removeUser }: UserActionsProps) {
           className="menu dropdown-content z-[1] w-fit rounded-box bg-secondary p-2 shadow"
         >
           <div className="flex items-center justify-between gap-6">
-            <div className="tooltip" data-tip="Excluir usuário">
+            <div className="tooltip" data-tip="Editar usuário">
+              <button
+                className="group btn btn-ghost btn-xs"
+                onClick={() => setOpenEditUserModal(true)}
+              >
+                <SquarePen size={16} />
+              </button>
+            </div>
+            <div className="tooltip" data-tip="Remover usuário">
               <button
                 className="group btn btn-ghost btn-xs"
                 onClick={() => setOpenAlertModal(true)}
               >
                 <Trash size={16} className="group-hover:fill-red-500" />
-              </button>
-            </div>
-            <div className="tooltip" data-tip="Re-enviar e-mail">
-              <button className="btn btn-ghost btn-xs">
-                <Mail size={16} />
               </button>
             </div>
           </div>
@@ -55,6 +61,15 @@ export default function UserActions({ userId, removeUser }: UserActionsProps) {
           setOpenAlertModal(false);
         }}
       />
+      {openEditUserModal && (
+        <AddUserModal
+          userToEdit={user}
+          onAccept={() => {
+            setOpenEditUserModal(false);
+          }}
+          onClose={() => setOpenEditUserModal(false)}
+        />
+      )}
     </div>
   );
 }

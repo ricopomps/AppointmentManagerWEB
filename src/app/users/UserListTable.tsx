@@ -1,5 +1,8 @@
+import { UserContext } from "@/context/UserProvider";
+import { getRoles } from "@/lib/utils";
 import { User } from "@clerk/nextjs/server";
 import { User as UserIcon } from "lucide-react";
+import { useContext } from "react";
 import UserActions from "./UserActions";
 
 interface UserListTableProps {
@@ -16,11 +19,6 @@ export default function UserListTable({
       <table className="table">
         <thead>
           <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="checkbox" />
-              </label>
-            </th>
             <th>Nome</th>
             <th>Email</th>
             <th>Status</th>
@@ -34,7 +32,6 @@ export default function UserListTable({
         </tbody>
         <tfoot>
           <tr>
-            <th></th>
             <th>Nome</th>
             <th>Email</th>
             <th>Status</th>
@@ -50,17 +47,11 @@ interface UserListItemProps {
   user: User;
   removeUser: (userId: string) => void;
 }
-function UserListItem({
-  user: { id, firstName, lastName },
-  removeUser,
-}: UserListItemProps) {
+function UserListItem({ user, removeUser }: UserListItemProps) {
+  const { clinic } = useContext(UserContext);
+
   return (
     <tr className="hover:bg-white/20">
-      <th>
-        <label>
-          <input type="checkbox" className="checkbox" />
-        </label>
-      </th>
       <td>
         <div className="flex items-center gap-3">
           <div className="avatar">
@@ -69,17 +60,20 @@ function UserListItem({
             </div>
           </div>
           <div>
-            <div className="font-bold">{firstName ?? "Usuário"}</div>
-            <div className="text-sm opacity-50">{lastName ?? "Pendente"} </div>
+            <div className="font-bold">{user.firstName ?? "-"}</div>
+            <div className="text-sm opacity-50">{user.lastName ?? "-"} </div>
           </div>
         </div>
       </td>
       <td>
         <span className="badge badge-ghost badge-lg">{"email"}</span>
       </td>
-      <td>{status}</td>
+      <td>
+        {clinic &&
+          getRoles(user, clinic.id).map((role) => <p key={role}>{role}</p>)}
+      </td>
       <th>
-        <UserActions userId={id} removeUser={removeUser} />
+        <UserActions user={user} removeUser={removeUser} />
       </th>
     </tr>
   );

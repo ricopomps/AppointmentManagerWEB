@@ -25,7 +25,7 @@ export default function UsersPage({
   const [users, setUsers] = useState<User[]>([]);
   const [searchValue, setSearchValue] = useState(name || "");
   const [totalCount, setTotalCount] = useState(0);
-  const [openAddUserModal, setOpenAddUserModal] = useState(true);
+  const [openAddUserModal, setOpenAddUserModal] = useState(false);
   const currentPage = page ? +page : 1;
 
   const removeUser = (userId: string) => {
@@ -65,6 +65,11 @@ export default function UsersPage({
     fetchData();
   }, [currentPage, name, searchValue, selectedClinic]);
 
+  function onAddedUser(user: User) {
+    setUsers([...users, user]);
+    setOpenAddUserModal(false);
+  }
+
   return (
     <main className="m-auto min-w-[300px] max-w-7xl p-4">
       <div className="flex items-center justify-center gap-3">
@@ -97,7 +102,7 @@ export default function UsersPage({
       />
       {openAddUserModal && (
         <AddUserModal
-          onAccept={() => setOpenAddUserModal(false)}
+          onAccept={onAddedUser}
           onClose={() => setOpenAddUserModal(false)}
         />
       )}

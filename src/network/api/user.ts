@@ -1,3 +1,4 @@
+import { AddUserSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
 import api from "@/network/axiosInstance";
 import { User } from "@clerk/nextjs/server";
@@ -21,12 +22,22 @@ export async function findUsersNotInClinic(
   search: string,
   take: number,
 ) {
-  const response = await api.get<User[]>(`${baseUrl}`, {
+  const response = await api.get<User[]>(baseUrl, {
     params: {
       clinicId,
       search,
       take,
     },
   });
+  return response.data;
+}
+
+export async function addUserToClinic(data: AddUserSchema) {
+  const response = await api.put<User>(baseUrl, data);
+  return response.data;
+}
+
+export async function editUserRoles(data: AddUserSchema) {
+  const response = await api.patch<User>(baseUrl, data);
   return response.data;
 }
