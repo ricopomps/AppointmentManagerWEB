@@ -41,8 +41,8 @@ export async function GET(
 
     return Response.json(users, { status: 200 });
   } catch (error) {
-    console.error("Error finding Clinic:", error);
+    console.error("Error finding Users:", error);
 
-    return Response.json({ error: `Error finding Clinic` }, { status: 500 });
+    return Response.json({ error: `Error finding Users` }, { status: 500 });
   }
 }

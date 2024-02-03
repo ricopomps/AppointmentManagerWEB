@@ -10,6 +10,13 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Filter users based on their roles in a specific clinic.
+ * @param user - User object to check roles for.
+ * @param clinicId - ID of the clinic to check roles against.
+ * @param roles - Array of roles to check for.
+ * @returns True if the user has any of the specified roles in the clinic, otherwise false.
+ */
 export function hasRole(
   user: User | UserResource,
   clinicId: string,
@@ -22,6 +29,7 @@ export function hasRole(
 
     return roles.some((role) => userRoles.includes(role));
   } catch (error) {
+    console.error(error);
     return false;
   }
 }

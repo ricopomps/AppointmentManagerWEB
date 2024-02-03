@@ -1,11 +1,14 @@
+import { UserContext } from "@/context/UserProvider";
 import {
   CreateClinicSchema,
   createClinicSchema,
 } from "@/lib/validation/clinic";
 import { AddUser, addUserSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
+import { findUsersNotInClinic } from "@/network/api/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
+import { useContext } from "react";
 import { Controller, useForm } from "react-hook-form";
 import LoadingButton from "../LoadingButton";
 import SelectSearch from "../SelectSearch";
@@ -16,6 +19,7 @@ interface AddUserModalProps {
 }
 
 export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
+  const { clinic } = useContext(UserContext);
   const {
     register,
     handleSubmit,
@@ -26,6 +30,16 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
     resolver: zodResolver(createClinicSchema),
     defaultValues: {},
   });
+
+  const onFetchUsers = async (search: string, take: number = 0) => {
+    try {
+      if (!clinic) return [];
+      const users = await findUsersNotInClinic(clinic.id, search, take);
+      return users.map((user) => user.firstName ?? "");
+    } catch (error) {
+      return [];
+    }
+  };
 
   return (
     <dialog className="modal modal-open">
@@ -38,7 +52,11 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
         </button>
         <h3 className="text-lg font-bold">Adicionar usuário</h3>
         <div className="mb-3 flex flex-col-reverse items-center justify-between gap-3 md:flex-row md:gap-0">
-          <SelectSearch control={control} name="name" />
+          <SelectSearch
+            onFetchOptions={onFetchUsers}
+            control={control}
+            name="name"
+          />
           <ModalCard />
         </div>
 

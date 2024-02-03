@@ -15,3 +15,18 @@ export async function findUsersWithRole(clinicId: string, role: Role) {
   });
   return response.data;
 }
+
+export async function findUsersNotInClinic(
+  clinicId: string,
+  search: string,
+  take: number,
+) {
+  const response = await api.get<User[]>(`${baseUrl}`, {
+    params: {
+      clinicId,
+      search,
+      take,
+    },
+  });
+  return response.data;
+}

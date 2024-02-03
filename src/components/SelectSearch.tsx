@@ -1,15 +1,21 @@
-import citiesList from "@/lib/cities-list";
-import { forwardRef, useMemo, useState } from "react";
+import useDebounce from "@/hooks/useDebounce";
+import { forwardRef, useEffect, useState } from "react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
 interface SelectSearchProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
+  minLenghtForSearch?: number;
+  maxSizeOfSelectList?: number;
+  onFetchOptions: (search: string, maxSize: number) => Promise<string[]>;
 }
 
 export default function SelectSearch<T extends FieldValues>({
   control,
   name,
+  minLenghtForSearch,
+  maxSizeOfSelectList,
+  onFetchOptions,
 }: SelectSearchProps<T>) {
   return (
     <Controller
@@ -17,7 +23,13 @@ export default function SelectSearch<T extends FieldValues>({
       name={name}
       render={({ field: { value, onChange, ...field } }) => {
         return (
-          <SelectSearchInner onLocationSelected={onChange} ref={field.ref} />
+          <SelectSearchInner
+            onFetchOptions={onFetchOptions}
+            minLenghtForSearch={minLenghtForSearch}
+            maxSizeOfSelectList={maxSizeOfSelectList}
+            onOptionSelected={onChange}
+            ref={field.ref}
+          />
         );
       }}
     />
@@ -26,62 +38,104 @@ export default function SelectSearch<T extends FieldValues>({
 
 interface SelectSearchInnerProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  onLocationSelected: (location: string) => void;
+  onOptionSelected: (option: string) => void;
+  minLenghtForSearch?: number;
+  maxSizeOfSelectList?: number;
+  onFetchOptions: (search: string, maxSize: number) => Promise<string[]>;
 }
 
 const SelectSearchInner = forwardRef<HTMLInputElement, SelectSearchInnerProps>(
-  function SelectSearch({ onLocationSelected, ...props }, ref) {
-    const [locationSearchInput, setLocationSearchInput] = useState("");
+  function SelectSearch(
+    {
+      onOptionSelected,
+      minLenghtForSearch = 3,
+      maxSizeOfSelectList = 5,
+      onFetchOptions,
+      ...props
+    },
+    ref,
+  ) {
+    const [searchInput, setSearchInput] = useState("");
+    const searchInputDebounced = useDebounce(searchInput);
     const [hasFocus, setHasFocus] = useState(false);
+    const [options, setOptions] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const cities = useMemo(() => {
-      if (!locationSearchInput.trim()) return [];
+    useEffect(() => {
+      setIsLoading(true);
 
-      const searchWords = locationSearchInput.split("");
+      const fetchOptions = async () => {
+        if (
+          !searchInputDebounced.trim() ||
+          searchInputDebounced.trim().length < minLenghtForSearch
+        ) {
+          setOptions([]);
+          return;
+        }
 
-      return citiesList
-        .map((city) => `${city.name}, ${city.subcountry}, ${city.country}`)
-        .filter(
-          (city) =>
-            city.toLowerCase().startsWith(searchWords[0].toLowerCase()) &&
-            searchWords.every((word) =>
-              city.toLocaleLowerCase().includes(word.toLocaleLowerCase()),
-            ),
-        )
-        .slice(0, 5);
-    }, [locationSearchInput]);
+        try {
+          const options = await onFetchOptions(
+            searchInputDebounced,
+            maxSizeOfSelectList,
+          );
+          setOptions(options);
+        } catch (error) {
+          console.error("Error fetching options:", error);
+          setOptions([]);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchOptions();
+    }, [
+      searchInputDebounced,
+      minLenghtForSearch,
+      onFetchOptions,
+      maxSizeOfSelectList,
+    ]);
 
     return (
       <div className="relative">
         <input
           className="input input-bordered mb-3 w-full"
-          placeholder="Search for a city"
+          placeholder={`Digite ${minLenghtForSearch > 0 ? `${minLenghtForSearch} caractéres ` : ""}para pesquisar...`}
           type="search"
-          onChange={(e) => setLocationSearchInput(e.target.value)}
-          value={locationSearchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          value={searchInput}
           onFocus={() => setHasFocus(true)}
           onBlur={() => setHasFocus(false)}
           {...props}
           ref={ref}
         />
-        {locationSearchInput.trim() && hasFocus && (
-          <div className="bg-background absolute z-20 w-full divide-y rounded-b-sm border-x border-b shadow-xl">
-            {!cities.length && <p className="p-3">No results found</p>}
-            {cities.map((city) => (
-              <button
-                key={city}
-                className="block w-full p-2 text-start"
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  onLocationSelected(city);
-                  setLocationSearchInput(city);
-                }}
-              >
-                {city}
-              </button>
-            ))}
-          </div>
-        )}
+        {searchInputDebounced.trim() &&
+          searchInputDebounced.length >= minLenghtForSearch &&
+          hasFocus && (
+            <div className="bg-background absolute z-20 w-full divide-y rounded-b-sm border-x border-b shadow-xl">
+              {!isLoading && !options.length && (
+                <p className="p-3">No results found</p>
+              )}
+              {isLoading && (
+                <div className="flex w-full items-center justify-center p-1">
+                  <span className="loading loading-spinner"></span>
+                </div>
+              )}
+              {!isLoading &&
+                options.map((option) => (
+                  <button
+                    key={option}
+                    className="block w-full p-2 text-start"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      onOptionSelected(option);
+                      setSearchInput(option);
+                    }}
+                  >
+                    {option}
+                  </button>
+                ))}
+            </div>
+          )}
       </div>
     );
   },
