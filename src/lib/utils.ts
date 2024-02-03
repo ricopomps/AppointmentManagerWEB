@@ -2,6 +2,8 @@ import { Role } from "@/models/roles";
 import { User } from "@clerk/nextjs/server"; // User from back
 import { UserResource } from "@clerk/types"; // User from front
 import { clsx, type ClassValue } from "clsx";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -34,4 +36,18 @@ export function getRoles(user: User | UserResource, clinicId: string) {
   } catch (error) {
     return [];
   }
+}
+
+export function formatDate(date: Date | string) {
+  if (!(date instanceof Date)) {
+    date = new Date(date);
+  }
+  return format(date, "dd/MM/yyyy", { locale: ptBR });
+}
+
+export function formatMoney(amount: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(amount);
 }

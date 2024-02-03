@@ -23,10 +23,21 @@ export async function GET(
       return Response.json({ error: `Clinic not found` }, { status: 404 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const role = searchParams.get("role");
+
     const users = await clerkClient.users.getUserList({
       userId: clinic.users,
       //paginate and filter later
     });
+
+    if (role) {
+      //validate if it is actually a role
+      const usersByRole = users.filter((user) =>
+        hasRole(user, clinicId, [role as Role]),
+      );
+      return Response.json(usersByRole, { status: 200 });
+    }
 
     return Response.json(users, { status: 200 });
   } catch (error) {
