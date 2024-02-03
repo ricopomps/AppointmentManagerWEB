@@ -9,7 +9,16 @@ import DatesTabs from "./DatesTabs";
 import DentistsTabs from "./DentistsTabs";
 import TotalAmountCard from "./TotalAmountsCard";
 
-export default function PaymentsPage() {
+interface PaymentsPageProps {
+  searchParams: {
+    selectedMonth?: string;
+    selectedDentistId?: string;
+  };
+}
+
+export default function PaymentsPage({
+  searchParams: { selectedDentistId, selectedMonth },
+}: PaymentsPageProps) {
   const { clinic } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -18,12 +27,16 @@ export default function PaymentsPage() {
     const fetchPayments = async () => {
       try {
         if (!clinic) return;
-        const payments = await getPayments(clinic.id);
+        const payments = await getPayments(
+          clinic.id,
+          selectedMonth,
+          selectedDentistId,
+        );
         setPayments(payments);
       } catch (error) {}
     };
     fetchPayments();
-  }, [clinic]);
+  }, [clinic, selectedMonth, selectedDentistId]);
 
   const addPayment = (payment: Payment) => {
     setPayments([...payments, payment]);

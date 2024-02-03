@@ -1,11 +1,16 @@
 "use client";
 
 import { UserContext } from "@/context/UserProvider";
+import { cn } from "@/lib/utils";
 import { getUniqueMonthsWithPayments } from "@/network/api/payment";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 
 export default function DatesTabs() {
   const { clinic } = useContext(UserContext);
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [monthsWithPayments, setMonthsWithPayments] = useState<string[]>([]);
 
   useEffect(() => {
@@ -23,15 +28,52 @@ export default function DatesTabs() {
     fetchPayments();
   }, [clinic]);
 
+  function generateDateLink(date: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("selectedMonth", date);
+
+    return `${pathname}?${params}`;
+  }
+
+  function generateAllLink() {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("selectedMonth");
+
+    return `${pathname}?${params}`;
+  }
+
+  function isSelected(dentistId: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    const selectedMonth = params.get("selectedMonth");
+
+    return selectedMonth === dentistId;
+  }
+
+  function isAll() {
+    const params = new URLSearchParams(searchParams.toString());
+    const selectedMonth = params.get("selectedMonth");
+
+    return !selectedMonth;
+  }
+
   return (
     <div role="tablist" className="tabs-boxed h-fit">
-      <div role="tab" className="tab tab-active">
+      <Link
+        href={generateAllLink()}
+        role="tab"
+        className={cn("tab", isAll() && "tab-active")}
+      >
         Todos
-      </div>
+      </Link>
       {monthsWithPayments.map((month, index) => (
-        <div role="tab" className="tab" key={index}>
+        <Link
+          href={generateDateLink(month)}
+          role="tab"
+          className={cn("tab", isSelected(month) && "tab-active")}
+          key={index}
+        >
           {month}
-        </div>
+        </Link>
       ))}
     </div>
   );

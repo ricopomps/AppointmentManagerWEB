@@ -65,7 +65,41 @@ export async function GET(
   { params: { clinicId } }: { params: { clinicId: string } },
 ) {
   try {
-    const payments = await prisma.payment.findMany({ where: { clinicId } });
+    const { searchParams } = new URL(req.url);
+    const startDate = searchParams.get("startDate");
+    const endDate = searchParams.get("endDate");
+    const dentistId = searchParams.get("dentistId");
+
+    const whereClause: {
+      clinicId: string;
+      paymentDate?: {
+        gte?: Date;
+        lte?: Date;
+      };
+      userId?: string;
+    } = {
+      clinicId,
+    };
+
+    if (startDate) {
+      whereClause.paymentDate = {
+        ...(whereClause.paymentDate || {}),
+        gte: new Date(startDate),
+      };
+    }
+
+    if (endDate) {
+      whereClause.paymentDate = {
+        ...(whereClause.paymentDate || {}),
+        lte: new Date(endDate),
+      };
+    }
+
+    if (dentistId) {
+      whereClause.userId = dentistId;
+    }
+
+    const payments = await prisma.payment.findMany({ where: whereClause });
 
     if (!payments) {
       return Response.json({ error: `Payments not found` }, { status: 404 });
