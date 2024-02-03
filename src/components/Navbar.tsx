@@ -85,7 +85,7 @@ export default function Navbar() {
 function TopBar() {
   return (
     <div className="drawer-content">
-      <div className="navbar bg-secondary">
+      <div className="bg-drawer-image navbar bg-secondary bg-contain">
         <div className="flex-none">
           <label htmlFor="my-drawer" className="btn btn-square btn-ghost">
             <svg
