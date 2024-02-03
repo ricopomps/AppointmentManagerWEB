@@ -1,10 +1,10 @@
 "use client";
+import AddUserModal from "@/components/Modal/AddUserModal";
 import Pagination from "@/components/Paginations";
 import { UserContext } from "@/context/UserProvider";
 import { findUsers } from "@/network/api/user";
 import { User } from "@clerk/nextjs/server";
 import { Search, UserPlus } from "lucide-react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import UserListTable from "./UserListTable";
@@ -25,6 +25,7 @@ export default function UsersPage({
   const [users, setUsers] = useState<User[]>([]);
   const [searchValue, setSearchValue] = useState(name || "");
   const [totalCount, setTotalCount] = useState(0);
+  const [openAddUserModal, setOpenAddUserModal] = useState(true);
   const currentPage = page ? +page : 1;
 
   const removeUser = (userId: string) => {
@@ -79,9 +80,14 @@ export default function UsersPage({
           <Search />
         </button>
         <div className="flex grow justify-end">
-          <Link href={`${pathname}/create`} className="end btn btn-primary">
+          <button
+            onClick={() => {
+              setOpenAddUserModal(true);
+            }}
+            className="end btn btn-primary"
+          >
             <UserPlus />
-          </Link>
+          </button>
         </div>
       </div>
       <UserListTable users={users} removeUser={removeUser} />
@@ -89,6 +95,12 @@ export default function UsersPage({
         currentPage={currentPage}
         totalPages={Math.ceil(totalCount / usersPerPage)}
       />
+      {openAddUserModal && (
+        <AddUserModal
+          onAccept={() => setOpenAddUserModal(false)}
+          onClose={() => setOpenAddUserModal(false)}
+        />
+      )}
     </main>
   );
 }
