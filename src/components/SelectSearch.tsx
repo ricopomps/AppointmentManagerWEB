@@ -96,7 +96,7 @@ const SelectSearchInner = forwardRef<HTMLInputElement, SelectSearchInnerProps>(
     ]);
 
     return (
-      <div className="relative">
+      <div className="relative w-full">
         <input
           className="input input-bordered mb-3 w-full"
           placeholder={`Digite ${minLenghtForSearch > 0 ? `${minLenghtForSearch} caractéres ` : ""}para pesquisar...`}
@@ -113,7 +113,7 @@ const SelectSearchInner = forwardRef<HTMLInputElement, SelectSearchInnerProps>(
           hasFocus && (
             <div className="bg-background absolute z-20 w-full divide-y rounded-b-sm border-x border-b shadow-xl">
               {!isLoading && !options.length && (
-                <p className="p-3">No results found</p>
+                <p className="p-3">Não foram encontrados resultados</p>
               )}
               {isLoading && (
                 <div className="flex w-full items-center justify-center p-1">
@@ -126,7 +126,6 @@ const SelectSearchInner = forwardRef<HTMLInputElement, SelectSearchInnerProps>(
                     key={option}
                     className="block w-full p-2 text-start"
                     onMouseDown={(e) => {
-                      e.preventDefault();
                       onOptionSelected(option);
                       setSearchInput(option);
                     }}

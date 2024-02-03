@@ -51,12 +51,14 @@ export default function AddUserModal({ onClose, onAccept }: AddUserModalProps) {
           <X className="h-5 w-5" />
         </button>
         <h3 className="text-lg font-bold">Adicionar usuário</h3>
-        <div className="mb-3 flex flex-col-reverse items-center justify-between gap-3 md:flex-row md:gap-0">
-          <SelectSearch
-            onFetchOptions={onFetchUsers}
-            control={control}
-            name="name"
-          />
+        <div className="mb-3 flex flex-col-reverse items-center justify-between gap-3 md:flex-row md:items-baseline lg:gap-0">
+          <div className="w-full md:w-[50%]">
+            <SelectSearch
+              onFetchOptions={onFetchUsers}
+              control={control}
+              name="name"
+            />
+          </div>
           <ModalCard />
         </div>
 
