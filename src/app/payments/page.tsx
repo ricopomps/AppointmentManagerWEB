@@ -5,6 +5,9 @@ import { UserContext } from "@/context/UserProvider";
 import { getPayments } from "@/network/api/payment";
 import { Payment } from "@prisma/client";
 import { useContext, useEffect, useState } from "react";
+import DatesTabs from "./DatesTabs";
+import DentistsTabs from "./DentistsTabs";
+import TotalAmountCard from "./TotalAmountsCard";
 
 export default function PaymentsPage() {
   const { clinic } = useContext(UserContext);
@@ -12,14 +15,14 @@ export default function PaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
 
   useEffect(() => {
-    try {
-      const fetchPayments = async () => {
+    const fetchPayments = async () => {
+      try {
         if (!clinic) return;
         const payments = await getPayments(clinic.id);
         setPayments(payments);
-      };
-      fetchPayments();
-    } catch (error) {}
+      } catch (error) {}
+    };
+    fetchPayments();
   }, [clinic]);
 
   const addPayment = (payment: Payment) => {
@@ -31,9 +34,26 @@ export default function PaymentsPage() {
     setIsOpen(false);
   };
 
+  function getValues() {
+    const totalRecipe = payments.reduce(
+      (sum, payment) => sum + payment.value,
+      0,
+    );
+    const totalCost = payments.reduce((sum, payment) => sum + payment.cost, 0);
+
+    return { totalRecipe, totalCost };
+  }
+
+  const { totalRecipe, totalCost } = getValues();
+
   return (
     <main className="m-auto min-w-[300px] max-w-full p-4 md:p-16 md:pt-4">
-      <div className="flex justify-center md:justify-end">
+      <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:justify-between">
+        <div className="flex flex-col gap-4 lg:flex-row">
+          <DentistsTabs />
+          <DatesTabs />
+        </div>
+        <TotalAmountCard totalRecipe={totalRecipe} totalCost={totalCost} />
         <button onClick={() => setIsOpen(true)} className="btn btn-primary">
           Adicionar pagamento
         </button>

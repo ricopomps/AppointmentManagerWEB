@@ -2,7 +2,7 @@ import { Role } from "@/models/roles";
 import { User } from "@clerk/nextjs/server"; // User from back
 import { UserResource } from "@clerk/types"; // User from front
 import { clsx, type ClassValue } from "clsx";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { twMerge } from "tailwind-merge";
 
@@ -50,4 +50,24 @@ export function formatMoney(amount: number) {
     style: "currency",
     currency: "BRL",
   }).format(amount);
+}
+
+export function getMonthAndYear(date: Date | string) {
+  if (!(date instanceof Date)) {
+    date = new Date(date);
+  }
+
+  const formattedMonth = format(date, "MMM yyyy", {
+    locale: ptBR,
+  });
+
+  return formattedMonth.charAt(0).toUpperCase() + formattedMonth.slice(1);
+}
+
+export function parseMonthAndYear(formattedString: string) {
+  const parsedDate = parse(formattedString, "MMMM yyyy", new Date(), {
+    locale: ptBR,
+  });
+
+  return parsedDate;
 }

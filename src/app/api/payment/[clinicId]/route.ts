@@ -65,16 +65,16 @@ export async function GET(
   { params: { clinicId } }: { params: { clinicId: string } },
 ) {
   try {
-    const clinic = await prisma.payment.findMany({ where: { clinicId } });
+    const payments = await prisma.payment.findMany({ where: { clinicId } });
 
-    if (!clinic) {
-      return Response.json({ error: `Clinic not found` }, { status: 404 });
+    if (!payments) {
+      return Response.json({ error: `Payments not found` }, { status: 404 });
     }
 
-    return Response.json(clinic, { status: 200 });
+    return Response.json(payments, { status: 200 });
   } catch (error) {
-    console.error("Error finding Clinic:", error);
+    console.error("Error finding Payments:", error);
 
-    return Response.json({ error: `Error finding Clinic` }, { status: 500 });
+    return Response.json({ error: `Error finding Payments` }, { status: 500 });
   }
 }

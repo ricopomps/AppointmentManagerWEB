@@ -60,7 +60,6 @@ export default function UserProvider({ children }: UserProviderProps) {
         setUserClinics(userClinics);
         if (!clinic && userClinics.length > 0) setClinic(userClinics[0]);
         if (clinic && user) {
-          console.log("Try to get role", getRoles(user, clinic.id));
           setRoles(getRoles(user, clinic.id));
         }
       };
