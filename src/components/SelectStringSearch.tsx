@@ -1,34 +1,29 @@
 import useDebounce from "@/hooks/useDebounce";
 import { forwardRef, useEffect, useState } from "react";
-import { Control, Controller, FieldValues } from "react-hook-form";
+import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
-interface SelectSearchProps<T extends FieldValues> {
+interface SelectStringSearchProps<T extends FieldValues> {
   control: Control<T>;
-  name: any;
+  name: Path<T>;
   minLenghtForSearch?: number;
   maxSizeOfSelectList?: number;
-  onFetchOptions: (search: string, maxSize: number) => Promise<Option[]>;
+  onFetchOptions: (search: string, maxSize: number) => Promise<string[]>;
 }
 
-export interface Option {
-  label: string;
-  value: string;
-}
-
-export default function SelectSearch<T extends FieldValues>({
+export default function SelectStringSearch<T extends FieldValues>({
   control,
   name,
   minLenghtForSearch,
   maxSizeOfSelectList,
   onFetchOptions,
-}: SelectSearchProps<T>) {
+}: SelectStringSearchProps<T>) {
   return (
     <Controller
       control={control}
       name={name}
       render={({ field: { value, onChange, ...field } }) => {
         return (
-          <SelectSearchInner
+          <SelectStringSearchInner
             onFetchOptions={onFetchOptions}
             minLenghtForSearch={minLenghtForSearch}
             maxSizeOfSelectList={maxSizeOfSelectList}
@@ -41,18 +36,18 @@ export default function SelectSearch<T extends FieldValues>({
   );
 }
 
-interface SelectSearchInnerProps<TValue>
+interface SelectStringSearchInnerProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  onOptionSelected: (value: string) => void;
+  onOptionSelected: (option: string) => void;
   minLenghtForSearch?: number;
   maxSizeOfSelectList?: number;
-  onFetchOptions: (search: string, maxSize: number) => Promise<Option[]>;
+  onFetchOptions: (search: string, maxSize: number) => Promise<string[]>;
 }
-type TValue = string;
-const SelectSearchInner = forwardRef<
+
+const SelectStringSearchInner = forwardRef<
   HTMLInputElement,
-  SelectSearchInnerProps<TValue>
->(function SelectSearch(
+  SelectStringSearchInnerProps
+>(function SelectStringSearch(
   {
     onOptionSelected,
     minLenghtForSearch = 3,
@@ -65,7 +60,7 @@ const SelectSearchInner = forwardRef<
   const [searchInput, setSearchInput] = useState("");
   const searchInputDebounced = useDebounce(searchInput);
   const [hasFocus, setHasFocus] = useState(false);
-  const [options, setOptions] = useState<Option[]>([]);
+  const [options, setOptions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -81,17 +76,11 @@ const SelectSearchInner = forwardRef<
       }
 
       try {
-        const fetchedOptions = await onFetchOptions(
+        const options = await onFetchOptions(
           searchInputDebounced,
           maxSizeOfSelectList,
         );
-
-        const formattedOptions: Option[] = fetchedOptions.map((option) => ({
-          label: option.label,
-          value: option.value, // You can adjust this based on your API response structure
-        }));
-
-        setOptions(formattedOptions);
+        setOptions(options);
       } catch (error) {
         console.error("Error fetching options:", error);
         setOptions([]);
@@ -112,9 +101,7 @@ const SelectSearchInner = forwardRef<
     <div className="relative w-full">
       <input
         className="input input-bordered mb-3 w-full"
-        placeholder={`Digite ${
-          minLenghtForSearch > 0 ? `${minLenghtForSearch} caractéres ` : ""
-        }para pesquisar...`}
+        placeholder={`Digite ${minLenghtForSearch > 0 ? `${minLenghtForSearch} caractéres ` : ""}para pesquisar...`}
         type="search"
         onChange={(e) => setSearchInput(e.target.value)}
         value={searchInput}
@@ -138,14 +125,14 @@ const SelectSearchInner = forwardRef<
             {!isLoading &&
               options.map((option) => (
                 <button
-                  key={option.value} // Use the value as the key
+                  key={option}
                   className="block w-full p-2 text-start"
                   onMouseDown={(e) => {
-                    onOptionSelected(option.value);
-                    setSearchInput(option.label); // Set label as the input value
+                    onOptionSelected(option);
+                    setSearchInput(option);
                   }}
                 >
-                  {option.label} {/* Display label in the dropdown */}
+                  {option}
                 </button>
               ))}
           </div>

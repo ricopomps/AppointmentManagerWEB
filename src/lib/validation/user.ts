@@ -2,6 +2,7 @@ import { Role } from "@/models/roles";
 import { z } from "zod";
 
 export const addUserSchema = z.object({
+  userId: z.string(),
   roles: z
     .array(
       z
@@ -17,4 +18,4 @@ export const addUserSchema = z.object({
     }),
 });
 
-export type AddUser = z.infer<typeof addUserSchema>;
+export type AddUserSchema = z.infer<typeof addUserSchema>;
