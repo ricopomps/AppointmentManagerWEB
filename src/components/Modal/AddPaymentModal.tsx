@@ -3,14 +3,12 @@ import {
   CreatePaymentSchema,
   createPaymentSchema,
 } from "@/lib/validation/payment";
+import { Especialidade } from "@/models/especialidade";
+import { Pagamento } from "@/models/pagamento";
 import { Role } from "@/models/roles";
+import { Status } from "@/models/status";
 import { createPayment } from "@/network/api/payment";
-import {
-  Especialidade,
-  Pagamento,
-  Status,
-  findUsersWithRole,
-} from "@/network/api/user";
+import { findUsersWithRole } from "@/network/api/user";
 import { User } from "@clerk/nextjs/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Payment } from "@prisma/client";

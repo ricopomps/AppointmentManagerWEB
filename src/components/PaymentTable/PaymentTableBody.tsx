@@ -1,5 +1,7 @@
 import { formatDate, formatMoney } from "@/lib/utils";
-import { Especialidade, Pagamento, Status } from "@/network/api/user";
+import { Especialidade } from "@/models/especialidade";
+import { Pagamento } from "@/models/pagamento";
+import { Status } from "@/models/status";
 import { Payment } from "@prisma/client";
 
 interface PaymentTableBodyProps {
