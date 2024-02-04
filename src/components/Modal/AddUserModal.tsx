@@ -1,4 +1,5 @@
 import { UserContext } from "@/context/UserProvider";
+import useFindUsersByClinic from "@/hooks/useFindUsersByClinic";
 import { getRoles } from "@/lib/utils";
 import { AddUserFormSchema, addUserFormSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
@@ -27,6 +28,7 @@ export default function AddUserModal({
   onAccept,
 }: AddUserModalProps) {
   const { clinic } = useContext(UserContext);
+  const { users, mutateUsers } = useFindUsersByClinic();
   const currentRoles =
     userToEdit && clinic ? getRoles(userToEdit, clinic?.id) : [];
   const defaultRoles = Object.values(Role).map((role) =>
@@ -86,6 +88,11 @@ export default function AddUserModal({
           roles: roleArray,
           clinicId: clinic.id,
         });
+        mutateUsers(
+          users.map((user) =>
+            user.id === updatedUser.id ? updatedUser : user,
+          ),
+        );
       } else {
         updatedUser = await addUserToClinic({
           ...data,

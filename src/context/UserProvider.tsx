@@ -53,6 +53,7 @@ export default function UserProvider({ children }: UserProviderProps) {
     roles,
   };
 
+  //Maybe transform into swr
   useEffect(() => {
     try {
       const fetchUserClinics = async () => {

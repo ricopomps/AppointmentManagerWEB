@@ -1,31 +1,14 @@
 "use client";
 
-import { UserContext } from "@/context/UserProvider";
+import useFindDentists from "@/hooks/useFindDentists";
 import { cn } from "@/lib/utils";
-import { Role } from "@/models/roles";
-import { findUsersWithRole } from "@/network/api/user";
-import { User } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
 
 export default function DentistsTabs() {
-  const { clinic } = useContext(UserContext);
+  const { dentists } = useFindDentists();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [dentists, setDentists] = useState<User[]>([]);
-  useEffect(() => {
-    const fetchDentists = async () => {
-      try {
-        if (clinic) {
-          const response = await findUsersWithRole(clinic.id, Role.doctor);
-          setDentists(response || []);
-        }
-      } catch (error) {}
-    };
-
-    fetchDentists();
-  }, [clinic]);
 
   function generateDentistLink(dentistId: string) {
     const params = new URLSearchParams(searchParams.toString());

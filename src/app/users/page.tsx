@@ -1,12 +1,11 @@
 "use client";
 import AddUserModal from "@/components/Modal/AddUserModal";
 import Pagination from "@/components/Paginations";
-import { UserContext } from "@/context/UserProvider";
-import { findUsers } from "@/network/api/user";
+import useFindUsersByClinic from "@/hooks/useFindUsersByClinic";
 import { User } from "@clerk/nextjs/server";
 import { Search, UserPlus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import UserListTable from "./UserListTable";
 
 interface UserPageProps {
@@ -19,17 +18,18 @@ interface UserPageProps {
 export default function UsersPage({
   searchParams: { name, page },
 }: UserPageProps) {
-  const { clinic: selectedClinic } = useContext(UserContext);
   const router = useRouter();
   const pathname = usePathname();
-  const [users, setUsers] = useState<User[]>([]);
   const [searchValue, setSearchValue] = useState(name || "");
   const [totalCount, setTotalCount] = useState(0);
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
+  const { users, mutateUsers } = useFindUsersByClinic();
+
   const currentPage = page ? +page : 1;
 
   const removeUser = (userId: string) => {
-    setUsers(users.filter((user) => user.id !== userId));
+    //REMOVE PROP DRILLING
+    mutateUsers(users.filter((user) => user.id !== userId));
   };
 
   function handleValueChange(value: string) {
@@ -44,29 +44,9 @@ export default function UsersPage({
   }
 
   const usersPerPage = 10;
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        // const { users, totalCount: usersCount } = await UsersApi.findUsers({
-        //   condo: condoId,
-        //   name: searchValue,
-        //   take: usersPerPage,
-        //   skip: usersPerPage * (currentPage - 1),
-        // });
-        if (selectedClinic) {
-          const users = await findUsers(selectedClinic.id);
-          setUsers(users);
-        }
-        // setTotalCount(usersCount);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData();
-  }, [currentPage, name, searchValue, selectedClinic]);
 
   function onAddedUser(user: User) {
-    setUsers([...users, user]);
+    mutateUsers([...users, user]);
     setOpenAddUserModal(false);
   }
 

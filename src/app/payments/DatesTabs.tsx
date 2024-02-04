@@ -1,32 +1,14 @@
 "use client";
 
-import { UserContext } from "@/context/UserProvider";
+import useUniqueMonthsWithPayments from "@/hooks/useUniqueMonthsWithPayments";
 import { cn } from "@/lib/utils";
-import { getUniqueMonthsWithPayments } from "@/network/api/payment";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
 
 export default function DatesTabs() {
-  const { clinic } = useContext(UserContext);
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const [monthsWithPayments, setMonthsWithPayments] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        if (clinic) {
-          const uniqueMonths = await getUniqueMonthsWithPayments(clinic.id);
-          setMonthsWithPayments(uniqueMonths);
-        }
-      } catch (error) {
-        console.error("Error fetching payments:", error);
-      }
-    };
-
-    fetchPayments();
-  }, [clinic]);
+  const { dates: monthsWithPayments } = useUniqueMonthsWithPayments();
 
   function generateDateLink(date: string) {
     const params = new URLSearchParams(searchParams.toString());

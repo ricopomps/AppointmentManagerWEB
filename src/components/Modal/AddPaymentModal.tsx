@@ -5,16 +5,14 @@ import {
 } from "@/lib/validation/payment";
 import { Especialidade } from "@/models/especialidade";
 import { Pagamento } from "@/models/pagamento";
-import { Role } from "@/models/roles";
 import { Status } from "@/models/status";
 import { createPayment } from "@/network/api/payment";
-import { findUsersWithRole } from "@/network/api/user";
-import { User } from "@clerk/nextjs/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Payment } from "@prisma/client";
 import { X } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import DentistSelector from "../DentistSelector";
 import LoadingButton from "../LoadingButton";
 
 interface AddPaymentModalProps {
@@ -26,6 +24,8 @@ export default function AddPaymentModal({
   onClose,
   onAccept,
 }: AddPaymentModalProps) {
+  const { clinic } = useContext(UserContext);
+
   const {
     register,
     handleSubmit,
@@ -59,23 +59,6 @@ export default function AddPaymentModal({
     key: Status[key as keyof typeof Status].toString(),
     value: key,
   }));
-  const { clinic } = useContext(UserContext);
-
-  const [users, setUsers] = useState<User[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (clinic) {
-          const users = await findUsersWithRole(clinic.id, Role.doctor);
-          setUsers(users);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchData();
-  }, [clinic]);
 
   return (
     <dialog className={"modal modal-open"}>
@@ -89,21 +72,11 @@ export default function AddPaymentModal({
         <h3 className="mb-3 text-lg font-bold">Adicionar pagamento</h3>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Dentista</label>
-          {/* <DentistSelector
+          <DentistSelector
             register={{
-              ...register("pacientName", { required: "Campo obrigatório" }),
+              ...register("userId", { required: "Campo obrigatório" }),
             }}
-          /> */}
-          <select
-            {...register("userId", { required: "Campo obrigatório" })}
-            className="input input-bordered mb-3 w-full"
-          >
-            {users.map((user) => (
-              <option key={user.id} value={user.id}>
-                {`${user.firstName} ${user.lastName}`}
-              </option>
-            ))}
-          </select>
+          />
           {errors.userId && (
             <p className="mb-1 text-red-500">{errors.userId.message}</p>
           )}

@@ -1,10 +1,9 @@
 "use client";
 import AddPaymentModal from "@/components/Modal/AddPaymentModal";
 import PaymentTable from "@/components/PaymentTable/PaymentTable";
-import { UserContext } from "@/context/UserProvider";
-import { getPayments } from "@/network/api/payment";
+import useFindPayments from "@/hooks/useFindPayments";
 import { Payment } from "@prisma/client";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import DatesTabs from "./DatesTabs";
 import DentistsTabs from "./DentistsTabs";
 import TotalAmountCard from "./TotalAmountsCard";
@@ -19,27 +18,14 @@ interface PaymentsPageProps {
 export default function PaymentsPage({
   searchParams: { selectedDentistId, selectedMonth },
 }: PaymentsPageProps) {
-  const { clinic } = useContext(UserContext);
+  const { payments, mutatePayments } = useFindPayments(
+    selectedMonth,
+    selectedDentistId,
+  );
   const [isOpen, setIsOpen] = useState(false);
-  const [payments, setPayments] = useState<Payment[]>([]);
-
-  useEffect(() => {
-    const fetchPayments = async () => {
-      try {
-        if (!clinic) return;
-        const payments = await getPayments(
-          clinic.id,
-          selectedMonth,
-          selectedDentistId,
-        );
-        setPayments(payments);
-      } catch (error) {}
-    };
-    fetchPayments();
-  }, [clinic, selectedMonth, selectedDentistId]);
 
   const addPayment = (payment: Payment) => {
-    setPayments([...payments, payment]);
+    mutatePayments([...payments, payment]);
   };
 
   const onAccept = (payment: Payment) => {
