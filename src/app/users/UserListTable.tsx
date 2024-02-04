@@ -20,8 +20,7 @@ export default function UserListTable({
         <thead>
           <tr>
             <th>Nome</th>
-            <th>Email</th>
-            <th>Status</th>
+            <th>Cargo</th>
             <th></th>
           </tr>
         </thead>
@@ -33,8 +32,7 @@ export default function UserListTable({
         <tfoot>
           <tr>
             <th>Nome</th>
-            <th>Email</th>
-            <th>Status</th>
+            <th>Cargo</th>
             <th></th>
           </tr>
         </tfoot>
@@ -64,9 +62,6 @@ function UserListItem({ user, removeUser }: UserListItemProps) {
             <div className="text-sm opacity-50">{user.lastName ?? "-"} </div>
           </div>
         </div>
-      </td>
-      <td>
-        <span className="badge badge-ghost badge-lg">{"email"}</span>
       </td>
       <td>
         {clinic &&

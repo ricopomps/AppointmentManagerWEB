@@ -1,11 +1,15 @@
 "use client";
 import AddUserModal from "@/components/Modal/AddUserModal";
 import Pagination from "@/components/Paginations";
+import { UserContext } from "@/context/UserProvider";
 import useFindUsersByClinic from "@/hooks/useFindUsersByClinic";
+import { hasRole } from "@/lib/utils";
+import { Role } from "@/models/roles";
+import { useUser } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { Search, UserPlus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import UserListTable from "./UserListTable";
 
 interface UserPageProps {
@@ -20,6 +24,8 @@ export default function UsersPage({
 }: UserPageProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user } = useUser();
+  const { clinic } = useContext(UserContext);
   const [searchValue, setSearchValue] = useState(name || "");
   const [totalCount, setTotalCount] = useState(0);
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
@@ -65,14 +71,23 @@ export default function UsersPage({
           <Search />
         </button>
         <div className="flex grow justify-end">
-          <button
-            onClick={() => {
-              setOpenAddUserModal(true);
-            }}
-            className="end btn btn-primary"
-          >
-            <UserPlus />
-          </button>
+          {user &&
+            clinic &&
+            hasRole(user, clinic.id, [Role.admin, Role.creator]) && (
+              <button
+                onClick={() => {
+                  setOpenAddUserModal(true);
+                }}
+                className="end btn btn-primary"
+                disabled={
+                  !user ||
+                  !clinic ||
+                  !hasRole(user, clinic.id, [Role.admin, Role.creator])
+                }
+              >
+                <UserPlus />
+              </button>
+            )}
         </div>
       </div>
       <UserListTable users={users} removeUser={removeUser} />

@@ -1,6 +1,6 @@
 import { UserContext } from "@/context/UserProvider";
 import useFindUsersByClinic from "@/hooks/useFindUsersByClinic";
-import { getRoles } from "@/lib/utils";
+import { getRoles, hasRole } from "@/lib/utils";
 import { AddUserFormSchema, addUserFormSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
 import {
@@ -8,6 +8,7 @@ import {
   editUserRoles,
   findUsersNotInClinic,
 } from "@/network/api/user";
+import { useUser } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
@@ -28,6 +29,7 @@ export default function AddUserModal({
   onAccept,
 }: AddUserModalProps) {
   const { clinic } = useContext(UserContext);
+  const { user } = useUser();
   const { users, mutateUsers } = useFindUsersByClinic();
   const currentRoles =
     userToEdit && clinic ? getRoles(userToEdit, clinic?.id) : [];
@@ -153,6 +155,14 @@ export default function AddUserModal({
                                       onChange(role);
                                     }
                                   }}
+                                  disabled={
+                                    !user ||
+                                    !clinic ||
+                                    !hasRole(user, clinic.id, [
+                                      Role.admin,
+                                      Role.creator,
+                                    ])
+                                  }
                                   defaultChecked={currentRoles.includes(role)}
                                   type="checkbox"
                                   id={role}

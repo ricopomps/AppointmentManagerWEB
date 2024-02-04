@@ -22,6 +22,8 @@ export default function Pagination({
     return `${pathname}?${params}`;
   }
 
+  if (totalPages <= 1) return null;
+
   return (
     <div className="flex justify-between">
       <Link
