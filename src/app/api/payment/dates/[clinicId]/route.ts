@@ -15,7 +15,13 @@ export async function GET(
       new Set(payments.map((payment) => getMonthAndYear(payment.paymentDate))),
     );
 
-    return Response.json(uniqueMonths, { status: 200 });
+    const sortedUniqueMonths = uniqueMonths.sort((a, b) => {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    return Response.json(sortedUniqueMonths, { status: 200 });
   } catch (error) {
     console.error("Error finding Payments:", error);
 
