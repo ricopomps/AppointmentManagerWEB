@@ -220,7 +220,9 @@ export default function AddPaymentModal({
             <p className="mb-1 text-red-500">{errors.paymentDate.message}</p>
           )}
 
-          <LoadingButton loading={isSubmitting}>Adicionar</LoadingButton>
+          <LoadingButton loading={isSubmitting} className="btn-block">
+            Adicionar
+          </LoadingButton>
         </form>
       </div>
       <form method="dialog" className="modal-backdrop">

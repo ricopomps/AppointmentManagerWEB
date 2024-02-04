@@ -122,7 +122,7 @@ export default function AddUserModal({
           <div className="mb-3 flex flex-col-reverse items-center justify-between gap-3 md:flex-row md:items-baseline lg:gap-0">
             <div className="w-full md:w-[50%]">
               {userToEdit ? (
-                <h1>
+                <h1 className="text-center text-base md:text-left">
                   {userToEdit.firstName} {userToEdit.lastName}
                 </h1>
               ) : (
