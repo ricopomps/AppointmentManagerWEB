@@ -46,10 +46,21 @@ export function getRoles(user: User | UserResource, clinicId: string) {
   }
 }
 
+export function handleStringToDate(dateString: string) {
+  let originalDate;
+  originalDate = new Date(dateString);
+  const timeZoneOffset = originalDate.getTimezoneOffset();
+  const adjustedDate = new Date(
+    originalDate.getTime() + timeZoneOffset * 60000,
+  );
+  return adjustedDate;
+}
+
 export function formatDate(date: Date | string) {
   if (!(date instanceof Date)) {
-    date = new Date(date);
+    date = handleStringToDate(date);
   }
+
   return format(date, "dd/MM/yyyy", { locale: ptBR });
 }
 
@@ -79,3 +90,16 @@ export function parseMonthAndYear(formattedString: string) {
 
   return parsedDate;
 }
+
+/**
+ * Formats a date or date string as "YYYY-MM-DD" for use in an input field.
+ * @param date - A Date object or date string to be formatted.
+ * @returns A string representing the formatted date in "YYYY-MM-DD" format.
+ */
+export const formatDateForInput = (date: Date | string) => {
+  if (!(date instanceof Date)) {
+    date = handleStringToDate(date);
+  }
+
+  return format(date, "yyyy-MM-dd");
+};

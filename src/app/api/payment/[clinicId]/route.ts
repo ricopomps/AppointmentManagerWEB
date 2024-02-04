@@ -1,5 +1,11 @@
 import { prisma } from "@/lib/db/prisma";
-import { createPaymentSchema } from "@/lib/validation/payment";
+import { hasRole } from "@/lib/utils";
+import {
+  createPaymentSchema,
+  deletePaymentSchema,
+  updatePaymentSchema,
+} from "@/lib/validation/payment";
+import { Role } from "@/models/roles";
 import { currentUser } from "@clerk/nextjs";
 
 export async function POST(
@@ -110,5 +116,108 @@ export async function GET(
     console.error("Error finding Payments:", error);
 
     return Response.json({ error: `Error finding Payments` }, { status: 500 });
+  }
+}
+
+export async function PUT(
+  req: Request,
+  { params: { clinicId } }: { params: { clinicId: string } },
+) {
+  try {
+    const user = await currentUser();
+
+    if (
+      !user?.id ||
+      !hasRole(user, clinicId, [
+        Role.managment,
+        Role.doctor,
+        Role.admin,
+        Role.creator,
+      ])
+    ) {
+      return Response.json({ error: `Unauthorized` }, { status: 401 });
+    }
+
+    const body = await req.json();
+
+    const parseResult = updatePaymentSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      console.error("Invalid input", parseResult.error);
+
+      return Response.json({ error: `Invalid input` }, { status: 400 });
+    }
+
+    const {
+      paymentId,
+      value,
+      cost,
+      expertise,
+      observations,
+      pacientName,
+      paymentDate,
+      paymentMethod,
+      procedure,
+      status,
+      userId,
+    } = parseResult.data;
+
+    const updatedPayment = await prisma.payment.update({
+      where: { id: paymentId },
+      data: {
+        clinicId,
+        value,
+        cost,
+        expertise,
+        observations,
+        pacientName,
+        paymentDate,
+        paymentMethod,
+        procedure,
+        status,
+        userId,
+      },
+    });
+
+    return Response.json(updatedPayment, { status: 200 });
+  } catch (error) {
+    console.error("Error updating payment:", error);
+
+    return Response.json({ error: `Error updating payment` }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  { params: { clinicId } }: { params: { clinicId: string } },
+) {
+  try {
+    const user = await currentUser();
+
+    if (!user?.id || !hasRole(user, clinicId, [Role.admin, Role.creator])) {
+      return Response.json({ error: `Unauthorized` }, { status: 401 });
+    }
+
+    const body = await req.json();
+
+    const parseResult = deletePaymentSchema.safeParse(body);
+
+    if (!parseResult.success) {
+      console.error("Invalid input", parseResult.error);
+
+      return Response.json({ error: `Invalid input` }, { status: 400 });
+    }
+
+    const { paymentId } = parseResult.data;
+
+    await prisma.payment.delete({
+      where: { id: paymentId },
+    });
+
+    return Response.json({ message: "Payment deleted" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting payment:", error);
+
+    return Response.json({ error: `Error deleting payment` }, { status: 500 });
   }
 }

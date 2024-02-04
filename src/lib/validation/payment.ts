@@ -42,3 +42,13 @@ export const createPaymentSchema = z
   }));
 
 export type CreatePaymentSchema = z.infer<typeof createPaymentSchema>;
+
+const paymentIdSchema = z.object({ paymentId: z.string() });
+
+export const updatePaymentSchema = paymentIdSchema.and(createPaymentSchema);
+
+export type UpdatePaymentSchema = z.infer<typeof updatePaymentSchema>;
+
+export const deletePaymentSchema = paymentIdSchema;
+
+export type DeletePaymentSchema = z.infer<typeof deletePaymentSchema>;

@@ -1,5 +1,9 @@
 import { parseMonthAndYear } from "@/lib/utils";
-import { CreatePaymentSchema } from "@/lib/validation/payment";
+import {
+  CreatePaymentSchema,
+  DeletePaymentSchema,
+  UpdatePaymentSchema,
+} from "@/lib/validation/payment";
 import api from "@/network/axiosInstance";
 import { Payment } from "@prisma/client";
 import { endOfMonth, startOfMonth } from "date-fns";
@@ -39,5 +43,23 @@ export async function getPayments(
 
 export async function getUniqueMonthsWithPayments(clinicId: string) {
   const response = await api.get<string[]>(`${baseUrl}/dates/${clinicId}`);
+  return response.data;
+}
+
+export async function updatePayment(
+  data: UpdatePaymentSchema,
+  clinicId: string,
+) {
+  const response = await api.put<Payment>(`${baseUrl}/${clinicId}`, data);
+  return response.data;
+}
+
+export async function deletePayment(
+  data: DeletePaymentSchema,
+  clinicId: string,
+) {
+  const response = await api.delete<Payment>(`${baseUrl}/${clinicId}`, {
+    data,
+  });
   return response.data;
 }

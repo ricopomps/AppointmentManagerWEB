@@ -1,4 +1,6 @@
 import { UserContext } from "@/context/UserProvider";
+import useFindPayments from "@/hooks/useFindPayments";
+import { formatDateForInput } from "@/lib/utils";
 import {
   CreatePaymentSchema,
   createPaymentSchema,
@@ -6,7 +8,7 @@ import {
 import { Especialidade } from "@/models/especialidade";
 import { Pagamento } from "@/models/pagamento";
 import { Status } from "@/models/status";
-import { createPayment } from "@/network/api/payment";
+import { createPayment, updatePayment } from "@/network/api/payment";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Payment } from "@prisma/client";
 import { X } from "lucide-react";
@@ -16,15 +18,18 @@ import DentistSelector from "../DentistSelector";
 import LoadingButton from "../LoadingButton";
 
 interface AddPaymentModalProps {
+  paymentToEdit?: Payment;
   onClose: () => void;
   onAccept: (payment: Payment) => void;
 }
 
 export default function AddPaymentModal({
+  paymentToEdit,
   onClose,
   onAccept,
 }: AddPaymentModalProps) {
   const { clinic } = useContext(UserContext);
+  const { payments, mutatePayments } = useFindPayments();
 
   const {
     register,
@@ -32,14 +37,37 @@ export default function AddPaymentModal({
     formState: { errors, isSubmitting },
   } = useForm<CreatePaymentSchema>({
     resolver: zodResolver(createPaymentSchema),
-    defaultValues: {},
+    defaultValues: {
+      cost: paymentToEdit?.cost ?? 0,
+      expertise: paymentToEdit?.expertise,
+      observations: paymentToEdit?.observations,
+      pacientName: paymentToEdit?.pacientName,
+      paymentMethod: paymentToEdit?.paymentMethod,
+      procedure: paymentToEdit?.procedure,
+      status: paymentToEdit?.status,
+      userId: paymentToEdit?.userId,
+      value: paymentToEdit?.value ?? 0,
+    },
   });
 
   async function onSubmit(data: CreatePaymentSchema) {
     try {
       if (!clinic) throw Error("Clínica obrigatória");
-      const response = await createPayment(data, clinic.id);
-      onAccept(response);
+      let payment: Payment;
+      if (paymentToEdit) {
+        payment = await updatePayment(
+          { ...data, paymentId: paymentToEdit.id },
+          clinic.id,
+        );
+        mutatePayments(
+          payments.map((payment) =>
+            payment.id === paymentToEdit.id ? paymentToEdit : payment,
+          ),
+        );
+      } else {
+        payment = await createPayment(data, clinic.id);
+      }
+      onAccept(payment);
     } catch (error) {
       console.error(error);
     }
@@ -69,7 +97,9 @@ export default function AddPaymentModal({
         >
           <X className="h-5 w-5" />
         </button>
-        <h3 className="mb-3 text-lg font-bold">Adicionar pagamento</h3>
+        <h3 className="mb-3 text-lg font-bold">
+          {paymentToEdit ? "Editar" : "Adicionar"} pagamento
+        </h3>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Dentista</label>
           <DentistSelector
@@ -207,6 +237,9 @@ export default function AddPaymentModal({
             Data
             <input
               type="date"
+              defaultValue={formatDateForInput(
+                paymentToEdit?.paymentDate ?? new Date(),
+              )}
               placeholder="Data"
               className="input input-bordered mb-3 w-full"
               lang="pt-br"
@@ -221,7 +254,7 @@ export default function AddPaymentModal({
           )}
 
           <LoadingButton loading={isSubmitting} className="btn-block">
-            Adicionar
+            {paymentToEdit ? "Editar" : "Adicionar"}
           </LoadingButton>
         </form>
       </div>

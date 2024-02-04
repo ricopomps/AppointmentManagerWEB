@@ -13,7 +13,7 @@ interface AlertModalProps {
   acceptButtonClassName?: ClassValue;
   cancelButtonClassName?: ClassValue;
   onClose: () => void;
-  onAccept: () => void;
+  onAccept: () => void | Promise<void>;
 }
 
 export default function AlertModal({
@@ -29,10 +29,10 @@ export default function AlertModal({
 }: AlertModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  function handleAccept() {
+  async function handleAccept() {
     try {
       setIsLoading(true);
-      onAccept();
+      await onAccept();
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -64,6 +64,7 @@ export default function AlertModal({
             <LoadingButton
               loading={isLoading}
               className={cn("btn btn-primary", acceptButtonClassName)}
+              onClick={handleAccept}
             >
               {acceptButtonText}
             </LoadingButton>
