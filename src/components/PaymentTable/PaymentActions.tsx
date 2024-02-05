@@ -46,7 +46,7 @@ export default function PaymentActions({ payment }: PaymentActionsProps) {
           <div className="flex items-center justify-between gap-6">
             <div className="tooltip" data-tip="Editar pagamento">
               <button
-                className="group btn btn-ghost btn-xs"
+                className="btn btn-ghost btn-xs"
                 onClick={() => setOpenEditPaymentModal(true)}
               >
                 <SquarePen size={16} />
@@ -57,10 +57,10 @@ export default function PaymentActions({ payment }: PaymentActionsProps) {
               hasRole(user, clinic.id, [Role.admin, Role.creator]) && (
                 <div className="tooltip" data-tip="Remover pagamento">
                   <button
-                    className="group btn btn-ghost btn-xs"
+                    className="btn btn-ghost btn-xs"
                     onClick={() => setOpenAlertModal(true)}
                   >
-                    <Trash size={16} className="group-hover:fill-red-500" />
+                    <Trash size={16} />
                   </button>
                 </div>
               )}

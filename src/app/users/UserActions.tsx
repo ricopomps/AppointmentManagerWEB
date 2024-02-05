@@ -1,19 +1,32 @@
 import AddUserModal from "@/components/Modal/AddUserModal";
 import AlertModal from "@/components/Modal/AlertModal";
+import { UserContext } from "@/context/UserProvider";
+import useFindUsers from "@/hooks/useFindUsersByClinic";
+import { removeFromClinic } from "@/network/api/user";
+import { useUser } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { SquarePen, Trash } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 interface UserActionsProps {
   user: User;
-  removeUser: (userId: string) => void;
 }
 
-export default function UserActions({ user, removeUser }: UserActionsProps) {
+export default function UserActions({ user }: UserActionsProps) {
+  const { user: loggedUser } = useUser();
+  const { clinic } = useContext(UserContext);
+  const { users, mutateUsers } = useFindUsers();
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [openEditUserModal, setOpenEditUserModal] = useState(false);
 
-  async function deleteUser() {}
+  async function deleteUser() {
+    try {
+      console.log("deleteUser", { userId: user.id, clinicId: clinic?.id });
+      if (!clinic) throw new Error("No clinic");
+      await removeFromClinic({ userId: user.id, clinicId: clinic.id });
+      mutateUsers(users.filter((existingUser) => existingUser.id !== user.id));
+    } catch (error) {}
+  }
 
   return (
     <div>
@@ -28,7 +41,7 @@ export default function UserActions({ user, removeUser }: UserActionsProps) {
           <div className="flex items-center justify-between gap-6">
             <div className="tooltip" data-tip="Editar usuário">
               <button
-                className="group btn btn-ghost btn-xs"
+                className="btn btn-ghost btn-xs"
                 onClick={() => setOpenEditUserModal(true)}
               >
                 <SquarePen size={16} />
@@ -36,10 +49,11 @@ export default function UserActions({ user, removeUser }: UserActionsProps) {
             </div>
             <div className="tooltip" data-tip="Remover usuário">
               <button
-                className="group btn btn-ghost btn-xs"
+                className="btn btn-ghost btn-xs"
                 onClick={() => setOpenAlertModal(true)}
+                disabled={loggedUser?.id === user.id}
               >
-                <Trash size={16} className="group-hover:fill-red-500" />
+                <Trash size={16} />
               </button>
             </div>
           </div>

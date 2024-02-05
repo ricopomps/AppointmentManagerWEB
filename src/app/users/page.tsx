@@ -33,11 +33,6 @@ export default function UsersPage({
 
   const currentPage = page ? +page : 1;
 
-  const removeUser = (userId: string) => {
-    //REMOVE PROP DRILLING
-    mutateUsers(users.filter((user) => user.id !== userId));
-  };
-
   function handleValueChange(value: string) {
     setSearchValue(value);
     const searchParams = new URLSearchParams({
@@ -90,7 +85,7 @@ export default function UsersPage({
             )}
         </div>
       </div>
-      <UserListTable users={users} removeUser={removeUser} />
+      <UserListTable users={users} />
       <Pagination
         currentPage={currentPage}
         totalPages={Math.ceil(totalCount / usersPerPage)}

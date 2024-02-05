@@ -1,4 +1,4 @@
-import { AddUserSchema } from "@/lib/validation/user";
+import { AddUserSchema, RemoveUserSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
 import api from "@/network/axiosInstance";
 import { User } from "@clerk/nextjs/server";
@@ -39,5 +39,10 @@ export async function addUserToClinic(data: AddUserSchema) {
 
 export async function editUserRoles(data: AddUserSchema) {
   const response = await api.patch<User>(baseUrl, data);
+  return response.data;
+}
+
+export async function removeFromClinic(data: RemoveUserSchema) {
+  const response = await api.delete<User>(baseUrl, { data });
   return response.data;
 }

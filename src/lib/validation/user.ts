@@ -37,3 +37,10 @@ export const addUserSchema = z.object({
 });
 
 export type AddUserSchema = z.infer<typeof addUserSchema>;
+
+export const removeUserSchema = z.object({
+  userId: z.string(),
+  clinicId: z.string(),
+});
+
+export type RemoveUserSchema = z.infer<typeof removeUserSchema>;

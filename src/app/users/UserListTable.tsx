@@ -7,13 +7,9 @@ import UserActions from "./UserActions";
 
 interface UserListTableProps {
   users: User[];
-  removeUser: (userId: string) => void;
 }
 
-export default function UserListTable({
-  users,
-  removeUser,
-}: UserListTableProps) {
+export default function UserListTable({ users }: UserListTableProps) {
   return (
     <div className="overflow-x-auto">
       <table className="table">
@@ -26,7 +22,7 @@ export default function UserListTable({
         </thead>
         <tbody>
           {users.map((user) => (
-            <UserListItem user={user} key={user.id} removeUser={removeUser} />
+            <UserListItem user={user} key={user.id} />
           ))}
         </tbody>
         <tfoot>
@@ -43,9 +39,8 @@ export default function UserListTable({
 
 interface UserListItemProps {
   user: User;
-  removeUser: (userId: string) => void;
 }
-function UserListItem({ user, removeUser }: UserListItemProps) {
+function UserListItem({ user }: UserListItemProps) {
   const { clinic } = useContext(UserContext);
 
   return (
@@ -68,7 +63,7 @@ function UserListItem({ user, removeUser }: UserListItemProps) {
           getRoles(user, clinic.id).map((role) => <p key={role}>{role}</p>)}
       </td>
       <th>
-        <UserActions user={user} removeUser={removeUser} />
+        <UserActions user={user} />
       </th>
     </tr>
   );
