@@ -39,7 +39,7 @@ export default function DatesTabs() {
   }
 
   return (
-    <div role="tablist" className="tabs-boxed h-fit">
+    <div role="tablist" className="tabs-boxed h-fit w-fit">
       <Link
         href={generateAllLink()}
         role="tab"

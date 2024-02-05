@@ -24,7 +24,7 @@ export default function Navbar() {
     <div>
       <div className="drawer">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-        <TopBar />
+        <TopBar toggleDrawer={toggleDrawer} />
         <div className="drawer-side z-10">
           <label
             htmlFor="my-drawer"
@@ -82,10 +82,17 @@ export default function Navbar() {
   );
 }
 
-function TopBar() {
+interface TopBarProps {
+  toggleDrawer: () => void;
+}
+
+function TopBar({ toggleDrawer }: TopBarProps) {
   return (
     <div className="drawer-content">
-      <div className="bg-drawer-image navbar bg-secondary bg-contain">
+      <div
+        className="navbar bg-secondary bg-drawer-image bg-contain"
+        onClick={toggleDrawer}
+      >
         <div className="flex-none">
           <label htmlFor="my-drawer" className="btn btn-square btn-ghost">
             <svg
@@ -104,13 +111,13 @@ function TopBar() {
           </label>
         </div>
         <div className="flex w-full items-center justify-between pr-0 md:pr-6">
-          <Link
-            href={"/"}
+          <label
+            htmlFor="my-drawer"
             className="btn btn-ghost btn-lg ml-0 flex items-center justify-between pl-0 text-xl md:pl-4"
           >
             <Image src={logo} alt="logo" width={50} height={50} />
             <p>Clínica</p>
-          </Link>
+          </label>
           <div className="flex items-center">
             <ClerkUserButton />
           </div>
