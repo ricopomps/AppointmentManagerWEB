@@ -1,7 +1,7 @@
 import AddUserModal from "@/components/Modal/AddUserModal";
 import AlertModal from "@/components/Modal/AlertModal";
 import { UserContext } from "@/context/UserProvider";
-import useFindUsers from "@/hooks/useFindUsersByClinic";
+import useFindUsers from "@/hooks/useFindUsers";
 import { handleError } from "@/lib/utils";
 import { removeFromClinic } from "@/network/api/user";
 import { useUser } from "@clerk/nextjs";
@@ -17,16 +17,18 @@ interface UserActionsProps {
 export default function UserActions({ user }: UserActionsProps) {
   const { user: loggedUser } = useUser();
   const { clinic } = useContext(UserContext);
-  const { users, mutateUsers } = useFindUsers();
+  const { users, totalUsers, mutateUsers } = useFindUsers();
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [openEditUserModal, setOpenEditUserModal] = useState(false);
 
   async function deleteUser() {
     try {
-      console.log("deleteUser", { userId: user.id, clinicId: clinic?.id });
       if (!clinic) throw new Error("No clinic");
       await removeFromClinic({ userId: user.id, clinicId: clinic.id });
-      mutateUsers(users.filter((existingUser) => existingUser.id !== user.id));
+      mutateUsers({
+        users: users.filter((existingUser) => existingUser.id !== user.id),
+        totalUsers: totalUsers - 1,
+      });
       toast.warning("Usuário removido com sucesso!");
     } catch (error) {
       handleError(error);
@@ -34,11 +36,12 @@ export default function UserActions({ user }: UserActionsProps) {
   }
 
   function updateUser(updatedUser: User) {
-    mutateUsers(
-      users.map((existingUser) =>
+    mutateUsers({
+      users: users.map((existingUser) =>
         existingUser.id === user.id ? updatedUser : existingUser,
       ),
-    );
+      totalUsers,
+    });
     setOpenEditUserModal(false);
     toast.success("Usuário editado com sucesso!");
   }

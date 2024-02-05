@@ -25,21 +25,31 @@ export async function GET(
 
     const { searchParams } = new URL(req.url);
     const role = searchParams.get("role");
+    const search = searchParams.get("search");
+    const skip = searchParams.get("skip");
+    const take = searchParams.get("take");
 
-    const users = await clerkClient.users.getUserList({
+    const whereCondition = {
       userId: clinic.users,
-      //paginate and filter later
-    });
+      query: search ?? "",
+      ...(skip && { offset: +skip }),
+      ...(take && { limit: +take }),
+    };
+    const [users, totalUsers] = await Promise.all([
+      clerkClient.users.getUserList(whereCondition),
+      clerkClient.users.getCount(whereCondition),
+    ]);
 
     if (role) {
       //validate if it is actually a role
+      //maybe change to a different route
       const usersByRole = users.filter((user) =>
         hasRole(user, clinicId, [role as Role]),
       );
       return Response.json(usersByRole, { status: 200 });
     }
 
-    return Response.json(users, { status: 200 });
+    return Response.json({ users, totalUsers }, { status: 200 });
   } catch (error) {
     console.error("Error finding Users:", error);
 

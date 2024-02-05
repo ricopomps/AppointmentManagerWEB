@@ -1,12 +1,24 @@
 import { AddUserSchema, RemoveUserSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
+import { PaginatedUsers } from "@/models/user";
 import api from "@/network/axiosInstance";
 import { User } from "@clerk/nextjs/server";
 
 const baseUrl = "user";
 
-export async function findUsers(clinicId: string) {
-  const response = await api.get<User[]>(`${baseUrl}/${clinicId}`);
+export async function findUsers(
+  clinicId: string,
+  search: string,
+  take?: number,
+  skip?: number,
+) {
+  const response = await api.get<PaginatedUsers>(`${baseUrl}/${clinicId}`, {
+    params: {
+      search,
+      take,
+      skip,
+    },
+  });
   return response.data;
 }
 

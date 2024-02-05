@@ -1,96 +1,48 @@
 "use client";
 import AddUserModal from "@/components/Modal/AddUserModal";
 import Pagination from "@/components/Paginations";
-import { UserContext } from "@/context/UserProvider";
-import useFindUsersByClinic from "@/hooks/useFindUsersByClinic";
-import { hasRole } from "@/lib/utils";
-import { Role } from "@/models/roles";
-import { useUser } from "@clerk/nextjs";
+import useFindUsers, { readFromUserSearchParams } from "@/hooks/useFindUsers";
 import { User } from "@clerk/nextjs/server";
-import { Search, UserPlus } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useContext, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import UserListTable from "./UserListTable";
+import UserSearch from "./UserSearch";
 
-interface UserPageProps {
-  searchParams: {
-    name?: string;
-    page?: string;
-  };
-}
-
-export default function UsersPage({
-  searchParams: { name, page },
-}: UserPageProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { user } = useUser();
-  const { clinic } = useContext(UserContext);
-  const [searchValue, setSearchValue] = useState(name || "");
-  const [totalCount, setTotalCount] = useState(0);
+export default function UsersPage() {
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
-  const { users, mutateUsers } = useFindUsersByClinic();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
 
-  const currentPage = page ? +page : 1;
-
-  function handleValueChange(value: string) {
-    setSearchValue(value);
-    const searchParams = new URLSearchParams({
-      ...(name && { name }),
-      ...(page && { page }),
-    });
-    searchParams.set("name", value);
-
-    router.replace(`${pathname}/?${searchParams.toString()}`);
-  }
-
-  const usersPerPage = 10;
+  const {
+    currentPage,
+    search,
+    take: usersPerPage,
+  } = readFromUserSearchParams(params);
+  const { users, totalUsers, mutateUsers, usersLoading } = useFindUsers();
 
   function onAddedUser(user: User) {
-    mutateUsers([...users, user]);
+    mutateUsers({ users: [...users, user], totalUsers: totalUsers + 1 });
     setOpenAddUserModal(false);
     toast.success("Usuário adicionado com sucesso!");
   }
 
+  if (usersLoading) return <span className="loading loading-spinner"></span>;
+
   return (
     <main className="m-auto min-w-[300px] max-w-7xl p-4">
-      <div className="flex items-center justify-center gap-3">
-        <div className="grow" />
-        <input
-          type="text"
-          placeholder="Pesquisar..."
-          className="input input-bordered w-full max-w-xs"
-          defaultValue={searchValue}
-          onChange={(e) => handleValueChange(e.target.value)}
-        />
-        <button className="btn btn-primary">
-          <Search />
-        </button>
-        <div className="flex grow justify-end">
-          {user &&
-            clinic &&
-            hasRole(user, clinic.id, [Role.admin, Role.creator]) && (
-              <button
-                onClick={() => {
-                  setOpenAddUserModal(true);
-                }}
-                className="end btn btn-primary"
-                disabled={
-                  !user ||
-                  !clinic ||
-                  !hasRole(user, clinic.id, [Role.admin, Role.creator])
-                }
-              >
-                <UserPlus />
-              </button>
-            )}
-        </div>
-      </div>
+      <UserSearch
+        page={currentPage}
+        search={search}
+        usersPerPage={usersPerPage}
+        setOpenAddUserModal={() => {
+          setOpenAddUserModal(true);
+        }}
+      />
       <UserListTable users={users} />
       <Pagination
         currentPage={currentPage}
-        totalPages={Math.ceil(totalCount / usersPerPage)}
+        totalPages={Math.ceil(totalUsers / usersPerPage)}
       />
       {openAddUserModal && (
         <AddUserModal
