@@ -2,7 +2,7 @@ import AddPaymentModal from "@/components/Modal/AddPaymentModal";
 import AlertModal from "@/components/Modal/AlertModal";
 import { UserContext } from "@/context/UserProvider";
 import useFindPayments from "@/hooks/useFindPayments";
-import { hasRole } from "@/lib/utils";
+import { handleError, hasRole } from "@/lib/utils";
 import { Role } from "@/models/roles";
 import { deletePayment } from "@/network/api/payment";
 import { useUser } from "@clerk/nextjs";
@@ -29,7 +29,7 @@ export default function PaymentActions({ payment }: PaymentActionsProps) {
         payments.filter((existingPayment) => existingPayment.id !== payment.id),
       );
     } catch (error) {
-      console.error(error);
+      handleError(error);
     }
   }
 

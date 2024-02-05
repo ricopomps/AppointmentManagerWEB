@@ -1,4 +1,5 @@
 import useDebounce from "@/hooks/useDebounce";
+import { handleError } from "@/lib/utils";
 import { forwardRef, useEffect, useState } from "react";
 import { Control, Controller, FieldValues } from "react-hook-form";
 
@@ -88,12 +89,12 @@ const SelectSearchInner = forwardRef<
 
         const formattedOptions: Option[] = fetchedOptions.map((option) => ({
           label: option.label,
-          value: option.value, // You can adjust this based on your API response structure
+          value: option.value,
         }));
 
         setOptions(formattedOptions);
       } catch (error) {
-        console.error("Error fetching options:", error);
+        handleError(error);
         setOptions([]);
       } finally {
         setIsLoading(false);

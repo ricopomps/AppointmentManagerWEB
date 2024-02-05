@@ -1,9 +1,12 @@
 import { Role } from "@/models/roles";
+import { TooManyRequestsError } from "@/network/http-errors";
 import { User } from "@clerk/nextjs/server"; // User from back
 import { UserResource } from "@clerk/types"; // User from front
+import { AxiosError, isAxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { format, parse } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -103,3 +106,22 @@ export const formatDateForInput = (date: Date | string) => {
 
   return format(date, "yyyy-MM-dd");
 };
+
+export function handleError(error: unknown) {
+  if (error instanceof TooManyRequestsError) {
+    toast.error("Too many requests, please wait a while");
+  } else if (isAxiosError(error)) {
+    const axiosError = error as AxiosError<{ error: string }>;
+    if (axiosError.response?.data?.error) {
+      toast.error(axiosError.response.data.error);
+    } else {
+      toast.error("An error occurred.");
+    }
+  } else if (error instanceof Error) {
+    toast.error(error.message);
+  } else if (typeof error === "string") {
+    toast.error(error);
+  } else {
+    toast.error("An error occurred.");
+  }
+}

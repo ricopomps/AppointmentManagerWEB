@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingButton from "@/components/LoadingButton";
+import { handleError } from "@/lib/utils";
 import {
   CreateClinicSchema,
   createClinicSchema,
@@ -26,7 +27,7 @@ export default function CreateClinicPage() {
       const response = await createClinic(data);
       router.push(`/clinic?clinicId=${response.id}`);
     } catch (error) {
-      console.error(error);
+      handleError(error);
     }
   }
 

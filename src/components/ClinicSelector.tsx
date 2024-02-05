@@ -1,6 +1,7 @@
 "use client";
 
 import { UserContext } from "@/context/UserProvider";
+import { handleError } from "@/lib/utils";
 import { useContext } from "react";
 
 export default function ClinicSelector() {
@@ -15,7 +16,9 @@ export default function ClinicSelector() {
       const clinic = userClinics.find((clinic) => (clinic.id = clinicId));
       if (!clinic) throw new Error("Clinic not found");
       setClinic(clinic);
-    } catch (error) {}
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   return (

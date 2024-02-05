@@ -2,6 +2,7 @@ import AddUserModal from "@/components/Modal/AddUserModal";
 import AlertModal from "@/components/Modal/AlertModal";
 import { UserContext } from "@/context/UserProvider";
 import useFindUsers from "@/hooks/useFindUsersByClinic";
+import { handleError } from "@/lib/utils";
 import { removeFromClinic } from "@/network/api/user";
 import { useUser } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
@@ -25,7 +26,9 @@ export default function UserActions({ user }: UserActionsProps) {
       if (!clinic) throw new Error("No clinic");
       await removeFromClinic({ userId: user.id, clinicId: clinic.id });
       mutateUsers(users.filter((existingUser) => existingUser.id !== user.id));
-    } catch (error) {}
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   return (

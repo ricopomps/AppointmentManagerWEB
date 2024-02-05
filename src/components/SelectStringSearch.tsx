@@ -1,4 +1,5 @@
 import useDebounce from "@/hooks/useDebounce";
+import { handleError } from "@/lib/utils";
 import { forwardRef, useEffect, useState } from "react";
 import { Control, Controller, FieldValues, Path } from "react-hook-form";
 
@@ -82,7 +83,7 @@ const SelectStringSearchInner = forwardRef<
         );
         setOptions(options);
       } catch (error) {
-        console.error("Error fetching options:", error);
+        handleError(error);
         setOptions([]);
       } finally {
         setIsLoading(false);

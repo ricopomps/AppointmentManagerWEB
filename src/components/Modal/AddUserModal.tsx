@@ -1,6 +1,6 @@
 import { UserContext } from "@/context/UserProvider";
 import useFindUsersByClinic from "@/hooks/useFindUsersByClinic";
-import { getRoles, hasRole } from "@/lib/utils";
+import { getRoles, handleError, hasRole } from "@/lib/utils";
 import { AddUserFormSchema, addUserFormSchema } from "@/lib/validation/user";
 import { Role } from "@/models/roles";
 import {
@@ -63,6 +63,7 @@ export default function AddUserModal({
 
       return options;
     } catch (error) {
+      handleError(error);
       return [];
     }
   };
@@ -103,7 +104,9 @@ export default function AddUserModal({
         });
       }
       onAccept(updatedUser);
-    } catch (error) {}
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   return (

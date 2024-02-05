@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, handleError } from "@/lib/utils";
 import { type ClassValue } from "clsx";
 import { X } from "lucide-react";
 import { useState } from "react";
@@ -34,6 +34,7 @@ export default function AlertModal({
       setIsLoading(true);
       await onAccept();
     } catch (error) {
+      handleError(error);
     } finally {
       setIsLoading(false);
     }

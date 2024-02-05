@@ -1,6 +1,6 @@
 import { UserContext } from "@/context/UserProvider";
 import useFindPayments from "@/hooks/useFindPayments";
-import { formatDateForInput } from "@/lib/utils";
+import { formatDateForInput, handleError } from "@/lib/utils";
 import {
   CreatePaymentSchema,
   createPaymentSchema,
@@ -69,7 +69,7 @@ export default function AddPaymentModal({
       }
       onAccept(payment);
     } catch (error) {
-      console.error(error);
+      handleError(error);
     }
   }
 
