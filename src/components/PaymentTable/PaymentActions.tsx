@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import { Payment } from "@prisma/client";
 import { SquarePen, Trash } from "lucide-react";
 import { useContext, useState } from "react";
+import { toast } from "react-toastify";
 
 interface PaymentActionsProps {
   payment: Payment;
@@ -28,9 +29,20 @@ export default function PaymentActions({ payment }: PaymentActionsProps) {
       mutatePayments(
         payments.filter((existingPayment) => existingPayment.id !== payment.id),
       );
+      toast.warning("Pagamento removido com sucesso!");
     } catch (error) {
       handleError(error);
     }
+  }
+
+  function updatePayment(updatedPayment: Payment) {
+    mutatePayments(
+      payments.map((existingPayment) =>
+        existingPayment.id === payment.id ? updatedPayment : existingPayment,
+      ),
+    );
+    setOpenEditPaymentModal(false);
+    toast.success("Pagamento editado com sucesso!");
   }
 
   return (
@@ -86,9 +98,7 @@ export default function PaymentActions({ payment }: PaymentActionsProps) {
       {openEditPaymentModal && (
         <AddPaymentModal
           paymentToEdit={payment}
-          onAccept={() => {
-            setOpenEditPaymentModal(false);
-          }}
+          onAccept={updatePayment}
           onClose={() => setOpenEditPaymentModal(false)}
         />
       )}

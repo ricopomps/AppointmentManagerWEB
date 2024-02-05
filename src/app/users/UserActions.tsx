@@ -8,6 +8,7 @@ import { useUser } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { SquarePen, Trash } from "lucide-react";
 import { useContext, useState } from "react";
+import { toast } from "react-toastify";
 
 interface UserActionsProps {
   user: User;
@@ -26,9 +27,20 @@ export default function UserActions({ user }: UserActionsProps) {
       if (!clinic) throw new Error("No clinic");
       await removeFromClinic({ userId: user.id, clinicId: clinic.id });
       mutateUsers(users.filter((existingUser) => existingUser.id !== user.id));
+      toast.warning("Usuário removido com sucesso!");
     } catch (error) {
       handleError(error);
     }
+  }
+
+  function updateUser(updatedUser: User) {
+    mutateUsers(
+      users.map((existingUser) =>
+        existingUser.id === user.id ? updatedUser : existingUser,
+      ),
+    );
+    setOpenEditUserModal(false);
+    toast.success("Usuário editado com sucesso!");
   }
 
   return (
@@ -81,9 +93,7 @@ export default function UserActions({ user }: UserActionsProps) {
       {openEditUserModal && (
         <AddUserModal
           userToEdit={user}
-          onAccept={() => {
-            setOpenEditUserModal(false);
-          }}
+          onAccept={updateUser}
           onClose={() => setOpenEditUserModal(false)}
         />
       )}

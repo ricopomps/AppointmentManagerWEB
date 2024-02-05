@@ -4,6 +4,7 @@ import PaymentTable from "@/components/PaymentTable/PaymentTable";
 import useFindPayments from "@/hooks/useFindPayments";
 import { Payment } from "@prisma/client";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import DatesTabs from "./DatesTabs";
 import DentistsTabs from "./DentistsTabs";
 import TotalAmountCard from "./TotalAmountsCard";
@@ -31,6 +32,7 @@ export default function PaymentsPage({
   const onAccept = (payment: Payment) => {
     addPayment(payment);
     setIsOpen(false);
+    toast.success("Pagamento adicionado com sucesso!");
   };
 
   function getValues() {

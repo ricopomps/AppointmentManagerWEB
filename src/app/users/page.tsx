@@ -10,6 +10,7 @@ import { User } from "@clerk/nextjs/server";
 import { Search, UserPlus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useState } from "react";
+import { toast } from "react-toastify";
 import UserListTable from "./UserListTable";
 
 interface UserPageProps {
@@ -49,6 +50,7 @@ export default function UsersPage({
   function onAddedUser(user: User) {
     mutateUsers([...users, user]);
     setOpenAddUserModal(false);
+    toast.success("Usuário adicionado com sucesso!");
   }
 
   return (

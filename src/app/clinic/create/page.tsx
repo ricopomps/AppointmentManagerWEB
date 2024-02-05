@@ -10,6 +10,7 @@ import { createClinic } from "@/network/api/clinic";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 export default function CreateClinicPage() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function CreateClinicPage() {
   async function onSubmit(data: CreateClinicSchema) {
     try {
       const response = await createClinic(data);
+      toast.success("Clínica criado com sucesso");
       router.push(`/clinic?clinicId=${response.id}`);
     } catch (error) {
       handleError(error);
