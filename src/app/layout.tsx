@@ -1,5 +1,6 @@
 import CustomToastContainer from "@/components/CustomToastContainer";
 import Navbar from "@/components/Navbar";
+import UserLoader from "@/components/UserLoader";
 import UserProvider from "@/context/UserProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
@@ -23,8 +24,10 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <UserProvider>
-            <Navbar />
-            {children}
+            <UserLoader>
+              <Navbar />
+              {children}
+            </UserLoader>
             <CustomToastContainer />
           </UserProvider>
         </body>

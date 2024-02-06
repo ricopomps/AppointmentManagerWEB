@@ -57,12 +57,14 @@ export default function UserProvider({ children }: UserProviderProps) {
   useEffect(() => {
     try {
       const fetchUserClinics = async () => {
-        const userClinics = await getUserClinics();
-        setUserClinics(userClinics);
-        if (!clinic && userClinics.length > 0) setClinic(userClinics[0]);
-        if (clinic && user) {
-          setRoles(getRoles(user, clinic.id));
-        }
+        try {
+          const userClinics = await getUserClinics();
+          setUserClinics(userClinics);
+          if (!clinic && userClinics.length > 0) setClinic(userClinics[0]);
+          if (clinic && user) {
+            setRoles(getRoles(user, clinic.id));
+          }
+        } catch (error) {}
       };
       fetchUserClinics();
     } catch (error) {}

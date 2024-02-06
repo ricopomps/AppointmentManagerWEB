@@ -1,4 +1,5 @@
 "use client";
+import Loader from "@/components/Loader";
 import AddUserModal from "@/components/Modal/AddUserModal";
 import Pagination from "@/components/Paginations";
 import useFindUsers, { readFromUserSearchParams } from "@/hooks/useFindUsers";
@@ -27,7 +28,7 @@ export default function UsersPage() {
     toast.success("Usuário adicionado com sucesso!");
   }
 
-  if (usersLoading) return <span className="loading loading-spinner"></span>;
+  if (usersLoading) return <Loader />;
 
   return (
     <main className="m-auto min-w-[300px] max-w-7xl p-4">
