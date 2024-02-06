@@ -3,12 +3,19 @@ import { formatMoney } from "@/lib/utils";
 interface TotalAmountCardProps {
   totalRecipe: number;
   totalCost: number;
+  loading: boolean;
 }
 
 export default function TotalAmountCard({
   totalRecipe,
   totalCost,
+  loading,
 }: TotalAmountCardProps) {
+  if (loading)
+    return (
+      <div className="skeleton mb-2 flex h-32 w-full min-w-[200px] max-w-[400px] justify-end p-4"></div>
+    );
+
   return (
     <div className="mb-2 flex w-full min-w-[200px] max-w-[400px] justify-end p-4">
       <div className="isolate aspect-video w-full rounded-xl bg-white/20 p-4 text-center text-neutral shadow-lg ring-1 ring-black/5 md:w-fit">

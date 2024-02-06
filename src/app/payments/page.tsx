@@ -19,7 +19,7 @@ interface PaymentsPageProps {
 export default function PaymentsPage({
   searchParams: { selectedDentistId, selectedMonth },
 }: PaymentsPageProps) {
-  const { payments, mutatePayments } = useFindPayments(
+  const { payments, mutatePayments, paymentsLoading } = useFindPayments(
     selectedMonth,
     selectedDentistId,
   );
@@ -54,12 +54,16 @@ export default function PaymentsPage({
           <DentistsTabs />
           <DatesTabs />
         </div>
-        <TotalAmountCard totalRecipe={totalRecipe} totalCost={totalCost} />
+        <TotalAmountCard
+          totalRecipe={totalRecipe}
+          totalCost={totalCost}
+          loading={paymentsLoading}
+        />
         <button onClick={() => setIsOpen(true)} className="btn btn-primary">
           Adicionar pagamento
         </button>
       </div>
-      <PaymentTable payments={payments} />
+      <PaymentTable payments={payments} loading={paymentsLoading} />
       {isOpen && (
         <AddPaymentModal onClose={() => setIsOpen(false)} onAccept={onAccept} />
       )}

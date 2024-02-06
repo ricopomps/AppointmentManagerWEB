@@ -8,7 +8,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 export default function DatesTabs() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const { dates: monthsWithPayments } = useUniqueMonthsWithPayments();
+  const { dates: monthsWithPayments, datesLoading } =
+    useUniqueMonthsWithPayments();
 
   function generateDateLink(date: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -37,6 +38,8 @@ export default function DatesTabs() {
 
     return !selectedMonth;
   }
+
+  if (datesLoading) return <div className="skeleton h-8 w-96"></div>;
 
   return (
     <div role="tablist" className="tabs-boxed h-fit w-fit">

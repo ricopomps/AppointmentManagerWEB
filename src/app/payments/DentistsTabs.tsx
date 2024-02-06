@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function DentistsTabs() {
-  const { dentists } = useFindDentists();
+  const { dentists, dentistsLoading } = useFindDentists();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -37,6 +37,8 @@ export default function DentistsTabs() {
 
     return !selectedDentistId;
   }
+
+  if (dentistsLoading) return <div className="skeleton h-8 w-96"></div>;
 
   return (
     <div role="tablist" className="tabs-boxed h-fit w-fit">
