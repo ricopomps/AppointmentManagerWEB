@@ -2,8 +2,15 @@
 
 import logo from "@/assets/logo.png";
 import { UserContext } from "@/context/UserProvider";
+import { AppRoutes } from "@/lib/routes";
 import { Role } from "@/models/roles";
-import { BarChart4, Church, CircleDollarSign, Users } from "lucide-react";
+import {
+  BarChart4,
+  Church,
+  CircleDollarSign,
+  Table2,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useContext } from "react";
@@ -38,7 +45,7 @@ export default function Navbar() {
             <ul>
               {hasRole([Role.admin, Role.creator]) && (
                 <li>
-                  <Link href={"/users"}>
+                  <Link href={AppRoutes.USERS}>
                     <Users />
                     <p>Gerenciamento de usuários</p>
                   </Link>
@@ -46,23 +53,31 @@ export default function Navbar() {
               )}
               {hasRole([Role.creator]) && (
                 <li>
-                  <Link href={"/clinic"}>
+                  <Link href={AppRoutes.CLINIC}>
                     <Church />
                     <p>Gerenciamento da Clínica</p>
                   </Link>
                 </li>
               )}
               <li>
-                <Link href={"/payments"}>
+                <Link href={AppRoutes.PAYMENTS}>
                   <CircleDollarSign />
                   <p>Pagamentos</p>
                 </Link>
               </li>
               {hasRole([Role.admin, Role.creator]) && (
                 <li>
-                  <Link href={"/charts"}>
+                  <Link href={AppRoutes.CHARTS}>
                     <BarChart4 />
                     <p>Relatórios</p>
+                  </Link>
+                </li>
+              )}
+              {hasRole([Role.admin, Role.creator]) && (
+                <li>
+                  <Link href={AppRoutes.TABLE}>
+                    <Table2 />
+                    <p>Tabela de pagamentos</p>
                   </Link>
                 </li>
               )}

@@ -58,7 +58,7 @@ export default function UserProvider({ children }: UserProviderProps) {
     try {
       const fetchUserClinics = async () => {
         try {
-          const userClinics = await getUserClinics();
+          const userClinics = await getUserClinics(); //TODO: this could definitely become a swr
           setUserClinics(userClinics);
           if (!clinic && userClinics.length > 0) setClinic(userClinics[0]);
           if (clinic && user) {

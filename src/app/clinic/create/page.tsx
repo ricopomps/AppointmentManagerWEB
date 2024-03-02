@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingButton from "@/components/LoadingButton";
+import { AppRoutes } from "@/lib/routes";
 import { handleError } from "@/lib/utils";
 import {
   CreateClinicSchema,
@@ -27,7 +28,7 @@ export default function CreateClinicPage() {
     try {
       const response = await createClinic(data);
       toast.success("Clínica criado com sucesso");
-      router.push(`/clinic?clinicId=${response.id}`);
+      router.push(`${AppRoutes.CLINIC}?clinicId=${response.id}`);
     } catch (error) {
       handleError(error);
     }

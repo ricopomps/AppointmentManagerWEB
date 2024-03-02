@@ -1,4 +1,4 @@
-import { Payment } from "@prisma/client";
+import { Payment, PaymentTablePreferences } from "@prisma/client";
 import PaymentTableBody from "./PaymentTableBody";
 import PaymentTableBodySkeleton from "./PaymentTableBodySkeleton";
 import PaymentTableFooter from "./PaymentTableFooter";
@@ -7,6 +7,7 @@ import PaymentTableHeader from "./PaymentTableHeader";
 interface PaymentTableProps {
   payments: Payment[];
   loading: boolean;
+  tablePreferences?: PaymentTablePreferences;
 }
 
 export default function PaymentTable({ payments, loading }: PaymentTableProps) {
