@@ -1,9 +1,10 @@
 "use client";
 import AddPaymentModal from "@/components/Modal/AddPaymentModal";
 import PaymentTable from "@/components/PaymentTable/PaymentTable";
+import { UserContext } from "@/context/UserProvider";
 import useFindPayments from "@/hooks/useFindPayments";
 import { Payment } from "@prisma/client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import DatesTabs from "./DatesTabs";
 import DentistsTabs from "./DentistsTabs";
@@ -19,6 +20,7 @@ interface PaymentsPageProps {
 export default function PaymentsPage({
   searchParams: { selectedDentistId, selectedMonth },
 }: PaymentsPageProps) {
+  const { isDoctor } = useContext(UserContext);
   const { payments, mutatePayments, paymentsLoading } = useFindPayments(
     selectedMonth,
     selectedDentistId,
@@ -51,7 +53,7 @@ export default function PaymentsPage({
     <main className="m-auto min-w-[300px] max-w-full p-4 md:p-16 md:pt-4">
       <div className="flex flex-col items-center justify-center gap-4 md:flex-row md:justify-between">
         <div className="flex flex-col gap-4 lg:flex-row">
-          <DentistsTabs />
+          {!isDoctor && <DentistsTabs />}
           <DatesTabs />
         </div>
         <TotalAmountCard

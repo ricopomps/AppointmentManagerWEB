@@ -15,26 +15,19 @@ export const addUserFormSchema = z.object({
     )
     .refine((data) => data.filter((d) => d).length > 0, {
       message: "Selecione pelo menos uma permisão",
+    })
+    .refine((data) => data.filter((d) => d).length === 1, {
+      message: "Selecione apenas uma permisão",
     }),
 });
 
 export type AddUserFormSchema = z.infer<typeof addUserFormSchema>;
 
-export const addUserSchema = z.object({
-  userId: z.string(),
-  clinicId: z.string(),
-  roles: z
-    .array(
-      z.nativeEnum(Role, {
-        errorMap: (issue, ctx) => {
-          return { message: "Valor inválido" };
-        },
-      }),
-    )
-    .refine((data) => data.filter((d) => d).length > 0, {
-      message: "Selecione pelo menos uma permisão",
-    }),
-});
+export const addUserSchema = z
+  .object({
+    clinicId: z.string(),
+  })
+  .and(addUserFormSchema);
 
 export type AddUserSchema = z.infer<typeof addUserSchema>;
 

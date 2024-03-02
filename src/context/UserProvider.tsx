@@ -13,6 +13,7 @@ interface UserContext {
   clinic: Clinic | null;
   userClinics: Clinic[];
   roles: Role[];
+  isDoctor: boolean;
 }
 
 export const UserContext = createContext<UserContext>({
@@ -25,6 +26,7 @@ export const UserContext = createContext<UserContext>({
   clinic: null,
   userClinics: [],
   roles: [],
+  isDoctor: false,
 });
 
 interface UserProviderProps {
@@ -51,6 +53,7 @@ export default function UserProvider({ children }: UserProviderProps) {
     clinic,
     userClinics,
     roles,
+    isDoctor: hasRole([Role.doctor]),
   };
 
   //Maybe transform into swr

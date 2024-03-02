@@ -1,6 +1,7 @@
 import { UserContext } from "@/context/UserProvider";
 import { getPayments } from "@/network/api/payment";
 import { UnauthorizedError } from "@/network/http-errors";
+import { useUser } from "@clerk/nextjs";
 import { useContext } from "react";
 import useSWR from "swr";
 
@@ -8,7 +9,12 @@ export default function useFindPayments(
   selectedMonth?: string,
   selectedDentistId?: string,
 ) {
-  const { clinic } = useContext(UserContext);
+  const { clinic, isDoctor } = useContext(UserContext);
+  const { user } = useUser();
+
+  if (isDoctor) {
+    selectedDentistId = user?.id;
+  }
 
   const { data, isLoading, error, mutate } = useSWR(
     `findPayments_${clinic?.id}${selectedMonth ? `_${selectedMonth}` : ""}${selectedDentistId ? `_${selectedDentistId}` : ""}`,

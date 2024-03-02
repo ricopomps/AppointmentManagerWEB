@@ -31,9 +31,7 @@ export default function AddUserModal({
   const { user } = useUser();
   const currentRoles =
     userToEdit && clinic ? getRoles(userToEdit, clinic?.id) : [];
-  const defaultRoles = Object.values(Role).map((role) =>
-    currentRoles.includes(role) ? role : null,
-  );
+
   const {
     handleSubmit,
     control,
@@ -42,7 +40,7 @@ export default function AddUserModal({
     resolver: zodResolver(addUserFormSchema),
     defaultValues: {
       userId: userToEdit?.id,
-      roles: defaultRoles,
+      roles: currentRoles,
     },
   });
 
@@ -137,7 +135,7 @@ export default function AddUserModal({
                     <div key={index} className="mb-2 flex items-center">
                       <Controller
                         control={control}
-                        name={`roles.${index}`}
+                        name={`roles.0`}
                         render={({ field: { value, onChange, ...field } }) => {
                           return (
                             <div className="flex flex-col">
@@ -146,7 +144,7 @@ export default function AddUserModal({
                                   {...field}
                                   onChange={() => {
                                     if (value === role) {
-                                      onChange(null);
+                                      onChange(undefined);
                                     } else {
                                       onChange(role);
                                     }
@@ -160,7 +158,7 @@ export default function AddUserModal({
                                     ])
                                   }
                                   defaultChecked={currentRoles.includes(role)}
-                                  type="checkbox"
+                                  type="radio"
                                   id={role}
                                   className={"checkbox-primary checkbox"}
                                 />
