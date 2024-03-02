@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { hasRole } from "@/lib/utils";
 import {
-  createPaymentSchema,
+  createPaymentSchemaWithPreferences,
   deletePaymentSchema,
   updatePaymentSchema,
 } from "@/lib/validation/payment";
@@ -13,9 +13,20 @@ export async function POST(
   { params: { clinicId } }: { params: { clinicId: string } },
 ) {
   try {
+    const user = await currentUser();
+
+    if (!user?.id) {
+      return Response.json({ error: `Unauthorized` }, { status: 401 });
+    }
+
     const body = await req.json();
 
-    const parseResult = createPaymentSchema.safeParse(body);
+    const paymentTablePreferences =
+      await prisma.paymentTablePreferences.findUnique({ where: { clinicId } });
+
+    const parseResult = createPaymentSchemaWithPreferences(
+      paymentTablePreferences,
+    ).safeParse(body);
 
     if (!parseResult.success) {
       console.error("Invalid input", parseResult.error);
@@ -35,12 +46,6 @@ export async function POST(
       status,
       userId,
     } = parseResult.data;
-
-    const user = await currentUser();
-
-    if (!user?.id) {
-      return Response.json({ error: `Unauthorized` }, { status: 401 });
-    }
 
     const createdPayment = await prisma.payment.create({
       data: {

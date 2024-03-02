@@ -14,7 +14,7 @@ export async function updatePaymentTablePreferences(
   clinicId: string,
   paymentTablePreferences: PaymentTablePreferences,
 ) {
-  const response = await api.put<PaymentTablePreferences | null>(
+  const response = await api.put<PaymentTablePreferences>(
     `${baseUrl}/${clinicId}`,
     paymentTablePreferences,
   );

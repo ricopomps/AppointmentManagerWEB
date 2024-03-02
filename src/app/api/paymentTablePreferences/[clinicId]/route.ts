@@ -65,8 +65,6 @@ export async function PUT(
       return Response.json({ error: `Invalid input` }, { status: 400 });
     }
 
-    console.log("parseResult.data", parseResult.data, body);
-
     const { hasPaymentAccount, hasPaymentMethod, hasSpecialty } =
       parseResult.data;
 

@@ -1,9 +1,15 @@
 import { Payment } from "@prisma/client";
 import PaymentListItem from "./PaymentListItem";
 
-export default function PaymentTableBodySkeleton() {
+interface PaymentTableBodySkeletonProps {
+  numberOfLines?: number;
+}
+
+export default function PaymentTableBodySkeleton({
+  numberOfLines,
+}: PaymentTableBodySkeletonProps) {
   let pay: Payment;
-  const numberOfPayments = 3;
+  const numberOfPayments = numberOfLines ?? 3;
 
   return (
     <tbody>

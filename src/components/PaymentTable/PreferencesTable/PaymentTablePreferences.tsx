@@ -1,24 +1,20 @@
-import { PaymentTablePreferences } from "@prisma/client";
+import usePaymentTablePreferences from "@/hooks/usePaymentTablePreferences";
 import PaymentTableBodySkeleton from "../PaymentTableBodySkeleton";
 import PaymentTableFooter from "../PaymentTableFooter";
 import PaymentTableHeader from "../PaymentTableHeader";
 import PaymentTablePreferencesBody from "./PaymentTablePreferencesBody";
 
-interface PaymentTablePreferencesProps {
-  loading: boolean;
-  tablePreferences: PaymentTablePreferences;
-}
-
-export default function PaymentTablePreferences({
-  tablePreferences,
-  loading,
-}: PaymentTablePreferencesProps) {
+export default function PaymentTablePreferences() {
+  const {
+    paymentTablePreferences: tablePreferences,
+    paymentTablePreferencesLoading: loading,
+  } = usePaymentTablePreferences();
   return (
     <div className="overflow-x-auto">
       <table className="table">
         <PaymentTableHeader />
         {loading ? (
-          <PaymentTableBodySkeleton />
+          <PaymentTableBodySkeleton numberOfLines={1} />
         ) : (
           <PaymentTablePreferencesBody
             loading={loading}

@@ -21,20 +21,20 @@ model Clinic {
 }
 
 model Payment {
-    id            String        @id @default(auto()) @map("_id") @db.ObjectId
-    clinicId      String        @db.ObjectId
+    id            String         @id @default(auto()) @map("_id") @db.ObjectId
+    clinicId      String         @db.ObjectId
     pacientName   String
     procedure     String
-    expertise     Expertise
-    paymentMethod PaymentMethod
+    expertise     Expertise?
+    paymentMethod PaymentMethod?
     value         Int
     cost          Int
     status        PaymentStatus
     observations  String
     userId        String
     paymentDate   DateTime
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
 
     @@map("payments")
 }

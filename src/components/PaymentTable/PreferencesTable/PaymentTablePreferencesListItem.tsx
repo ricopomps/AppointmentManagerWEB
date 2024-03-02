@@ -1,8 +1,10 @@
+import LoadingButton from "@/components/LoadingButton";
 import { UserContext } from "@/context/UserProvider";
 import { handleError } from "@/lib/utils";
 import { updatePaymentTablePreferences } from "@/network/api/paymentTablePreferences";
 import { PaymentTablePreferences } from "@prisma/client";
 import { useContext, useState } from "react";
+import { toast } from "react-toastify";
 
 interface PaymentTablePreferencesListItemProps {
   tablePreferences: PaymentTablePreferences;
@@ -12,6 +14,7 @@ export default function PaymentTablePreferencesListItem({
   tablePreferences: initialTablePreferences,
 }: PaymentTablePreferencesListItemProps) {
   const { clinic } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
   const [tablePreferences, setTablePreferences] =
     useState<PaymentTablePreferences>(initialTablePreferences);
 
@@ -27,15 +30,18 @@ export default function PaymentTablePreferencesListItem({
 
   async function handleSubmit() {
     try {
-      console.log("tablePreferences", tablePreferences);
+      setLoading(true);
       if (!clinic) throw Error("Clínica não selecionada");
-      const returno = await updatePaymentTablePreferences(
+      const updatedValue = await updatePaymentTablePreferences(
         clinic.id,
         tablePreferences,
       );
-      console.log("returno", returno);
+      setTablePreferences(updatedValue);
+      toast.success("Preferências salvas");
     } catch (error) {
       handleError(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -92,9 +98,13 @@ export default function PaymentTablePreferencesListItem({
         <PaymentTablePreferencesItem disabled />
       </td>
       <td>
-        <button className="btn btn-primary" onClick={handleSubmit}>
+        <LoadingButton
+          loading={loading}
+          className="btn btn-primary"
+          onClick={handleSubmit}
+        >
           Salvar
-        </button>
+        </LoadingButton>
       </td>
     </tr>
   );

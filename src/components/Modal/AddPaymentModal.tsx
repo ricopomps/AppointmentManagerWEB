@@ -1,9 +1,10 @@
 import { UserContext } from "@/context/UserProvider";
 import useFindPayments from "@/hooks/useFindPayments";
+import usePaymentTablePreferences from "@/hooks/usePaymentTablePreferences";
 import { formatDateForInput, handleError } from "@/lib/utils";
 import {
   CreatePaymentSchema,
-  createPaymentSchema,
+  createPaymentSchemaWithPreferences,
 } from "@/lib/validation/payment";
 import { Especialidade } from "@/models/especialidade";
 import { Pagamento } from "@/models/pagamento";
@@ -30,19 +31,22 @@ export default function AddPaymentModal({
 }: AddPaymentModalProps) {
   const { clinic } = useContext(UserContext);
   const { payments, mutatePayments } = useFindPayments();
+  const { paymentTablePreferences } = usePaymentTablePreferences();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<CreatePaymentSchema>({
-    resolver: zodResolver(createPaymentSchema),
+    resolver: zodResolver(
+      createPaymentSchemaWithPreferences(paymentTablePreferences),
+    ),
     defaultValues: {
       cost: paymentToEdit?.cost ?? 0,
-      expertise: paymentToEdit?.expertise,
+      expertise: paymentToEdit?.expertise ?? undefined,
       observations: paymentToEdit?.observations,
       pacientName: paymentToEdit?.pacientName,
-      paymentMethod: paymentToEdit?.paymentMethod,
+      paymentMethod: paymentToEdit?.paymentMethod ?? undefined,
       procedure: paymentToEdit?.procedure,
       status: paymentToEdit?.status,
       userId: paymentToEdit?.userId,
@@ -50,13 +54,21 @@ export default function AddPaymentModal({
     },
   });
 
+  function showInput(preference?: boolean | null) {
+    if (preference === false) return false;
+    return true;
+  }
+
   async function onSubmit(data: CreatePaymentSchema) {
     try {
       if (!clinic) throw Error("Clínica obrigatória");
       let payment: Payment;
       if (paymentToEdit) {
         payment = await updatePayment(
-          { ...data, paymentId: paymentToEdit.id },
+          {
+            ...data,
+            paymentId: paymentToEdit.id,
+          },
           clinic.id,
         );
         mutatePayments(
@@ -124,21 +136,25 @@ export default function AddPaymentModal({
             <p className="mb-1 text-red-500">{errors.pacientName.message}</p>
           )}
 
-          <label>
-            Especialidade
-            <select
-              {...register("expertise")}
-              className="input input-bordered mb-3 w-full"
-            >
-              {expertiseOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.key}
-                </option>
-              ))}
-            </select>
-          </label>
-          {errors.expertise && (
-            <p className="mb-1 text-red-500">{errors.expertise.message}</p>
+          {showInput(paymentTablePreferences.hasSpecialty) && (
+            <div>
+              <label>
+                Especialidade
+                <select
+                  {...register("expertise")}
+                  className="input input-bordered mb-3 w-full"
+                >
+                  {expertiseOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.key}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {errors.expertise && (
+                <p className="mb-1 text-red-500">{errors.expertise.message}</p>
+              )}
+            </div>
           )}
 
           <label>
@@ -154,21 +170,29 @@ export default function AddPaymentModal({
             <p className="mb-1 text-red-500">{errors.procedure.message}</p>
           )}
 
-          <label>
-            Forma de Pagamento
-            <select
-              {...register("paymentMethod", { required: "Campo obrigatório" })}
-              className="input input-bordered mb-3 w-full"
-            >
-              {paymentMethodOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.key}
-                </option>
-              ))}
-            </select>
-          </label>
-          {errors.paymentMethod && (
-            <p className="mb-1 text-red-500">{errors.paymentMethod.message}</p>
+          {showInput(paymentTablePreferences.hasPaymentMethod) && (
+            <div>
+              <label>
+                Forma de Pagamento
+                <select
+                  {...register("paymentMethod", {
+                    required: "Campo obrigatório",
+                  })}
+                  className="input input-bordered mb-3 w-full"
+                >
+                  {paymentMethodOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.key}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {errors.paymentMethod && (
+                <p className="mb-1 text-red-500">
+                  {errors.paymentMethod.message}
+                </p>
+              )}
+            </div>
           )}
 
           <label>
