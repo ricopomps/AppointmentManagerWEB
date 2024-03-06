@@ -53,7 +53,9 @@ export default function UserProvider({ children }: UserProviderProps) {
     clinic,
     userClinics,
     roles,
-    isDoctor: hasRole([Role.doctor]),
+    isDoctor:
+      hasRole([Role.doctor]) &&
+      !hasRole(Object.values(Role).filter((role) => role != Role.doctor)),
   };
 
   //Maybe transform into swr

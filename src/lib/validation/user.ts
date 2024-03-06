@@ -15,9 +15,6 @@ export const addUserFormSchema = z.object({
     )
     .refine((data) => data.filter((d) => d).length > 0, {
       message: "Selecione pelo menos uma permisão",
-    })
-    .refine((data) => data.filter((d) => d).length === 1, {
-      message: "Selecione apenas uma permisão",
     }),
 });
 
